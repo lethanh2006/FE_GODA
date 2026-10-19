@@ -1,6 +1,6 @@
 "use client";
 
-import { Flame, PlayCircle, RotateCcw, Target, Timer, TrendingUp } from "lucide-react";
+import { Crosshair, Flame, PlayCircle, RotateCcw, Target, Timer, TrendingUp } from "lucide-react";
 import useSWR from "swr";
 import { useAuth } from "@/components/auth/auth-provider";
 import { BarList } from "@/components/charts/bar-list";
@@ -11,7 +11,7 @@ import { EmptyState, ErrorNotice, PageLoading } from "@/components/ui/feedback";
 import { LevelBadge } from "@/components/ui/badge";
 import { useStartAttempt } from "@/lib/attempts";
 import { formatDuration, formatNumber, formatPercent } from "@/lib/format";
-import { LEVELS } from "@/lib/jlpt";
+import { LEVEL_META, LEVELS } from "@/lib/jlpt";
 import type { UserStats } from "@/lib/types";
 import { AttemptList } from "./attempt-list";
 
@@ -56,6 +56,8 @@ export function Dashboard() {
         <StatTile icon={<Timer className="size-4" />} label="Thời gian học" value={formatDuration(totals.studySeconds)} hint="Tổng thời gian làm bài" />
         <StatTile icon={<Flame className="size-4" />} label="Chuỗi ngày học" value={`${totals.streakDays} ngày`} hint={totals.streakDays ? "Giữ vững nhé!" : "Làm 1 bài hôm nay để bắt đầu"} />
       </div>
+
+      <TargetBanner />
 
       {stats.inProgress.length > 0 && (
         <Card>
@@ -178,6 +180,45 @@ function StatTile({ icon, label, value, hint }: { icon: React.ReactNode; label: 
       <p className="flex items-center gap-1.5 text-sm text-muted">{icon} {label}</p>
       <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
       <p className="mt-1 text-xs text-muted">{hint}</p>
+    </Card>
+  );
+}
+
+function TargetBanner() {
+  const { user } = useAuth();
+  const { start, pending, error } = useStartAttempt();
+  const level = user?.targetLevel;
+
+  if (!level) {
+    return (
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border p-4 text-sm">
+        <span className="flex items-center gap-2 text-muted">
+          <Crosshair className="size-4" /> Chọn cấp độ mục tiêu để nhận gợi ý luyện tập phù hợp.
+        </span>
+        <ButtonLink href="/settings" size="sm" variant="secondary">Chọn mục tiêu</ButtonLink>
+      </div>
+    );
+  }
+
+  return (
+    <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+      <div className="flex items-center gap-3">
+        <Crosshair className="size-5 text-primary" />
+        <div>
+          <p className="text-sm font-medium">Mục tiêu: JLPT {level} · {LEVEL_META[level].name}</p>
+          <p className="text-xs text-muted">Luyện đều mỗi ngày một bài ngắn sẽ hiệu quả hơn học dồn.</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" disabled={pending !== null} onClick={() => start({ kind: "practice", level, count: 20 }, "daily")}>
+          {pending === "daily" ? "Đang tạo…" : "Luyện 20 câu"}
+        </Button>
+        <Button size="sm" variant="secondary" disabled={pending !== null} onClick={() => start({ kind: "random_exam", level }, "exam")}>
+          {pending === "exam" ? "Đang tạo…" : "Đề ngẫu nhiên"}
+        </Button>
+        <ButtonLink href={`/${level.toLowerCase()}`} size="sm" variant="ghost">Trang {level}</ButtonLink>
+      </div>
+      {error && <p className="basis-full text-sm text-red-600">{error}</p>}
     </Card>
   );
 }

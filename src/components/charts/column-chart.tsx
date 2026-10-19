@@ -36,7 +36,7 @@ export function ColumnChart({
       <div className="relative flex gap-2">
         <div className="flex w-8 flex-col justify-between text-right text-[11px] text-muted tabular-nums" style={{ height }}>
           <span>{niceMax}</span>
-          <span>{Math.round(niceMax / 2)}</span>
+          <span>{(niceMax / 2).toLocaleString("vi-VN")}</span>
           <span>0</span>
         </div>
         <div className="relative flex-1" style={{ height }}>
