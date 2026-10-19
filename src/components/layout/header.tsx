@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, BookMarked, History, LogOut, Menu, User as UserIcon, X } from "lucide-react";
+import { BarChart3, BookMarked, History, LogOut, Menu, Settings, ShieldAlert, User as UserIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -73,6 +73,7 @@ export function Header() {
             <Link href="/dashboard" className="rounded-md px-2 py-2 hover:bg-subtle">Tiến độ học tập</Link>
             <Link href="/history" className="rounded-md px-2 py-2 hover:bg-subtle">Lịch sử làm bài</Link>
             <Link href="/bookmarks" className="rounded-md px-2 py-2 hover:bg-subtle">Câu hỏi đã lưu</Link>
+            <Link href="/settings" className="rounded-md px-2 py-2 hover:bg-subtle">Cài đặt tài khoản</Link>
             <Link href="/about" className="rounded-md px-2 py-2 hover:bg-subtle">Giới thiệu & nguồn dữ liệu</Link>
           </div>
         </nav>
@@ -117,6 +118,8 @@ function UserMenu() {
     { href: "/dashboard", label: "Tiến độ học tập", icon: BarChart3 },
     { href: "/history", label: "Lịch sử làm bài", icon: History },
     { href: "/bookmarks", label: "Câu hỏi đã lưu", icon: BookMarked },
+    { href: "/settings", label: "Cài đặt tài khoản", icon: Settings },
+    ...(user.role === "ADMIN" ? [{ href: "/admin/reports", label: "Báo lỗi câu hỏi", icon: ShieldAlert }] : []),
   ];
 
   return (
