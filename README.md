@@ -33,6 +33,8 @@ Trình duyệt luôn gọi `/api/*` trên chính domain của web. Next.js proxy
 | `/practice` | Tự tạo bài luyện: cấp độ, dạng bài, số câu, cách chọn câu, giới hạn giờ |
 | `/dashboard` | Tiến độ: độ chính xác, hoạt động 30 ngày, dạng bài yếu, bài đang làm dở |
 | `/history`, `/bookmarks` | Lịch sử làm bài, câu hỏi đã lưu |
+| `/settings` | Đổi tên hiển thị, chọn cấp độ mục tiêu |
+| `/admin/reports` | (Quản trị viên) xử lý báo lỗi câu hỏi |
 | `/login`, `/register`, `/about` | Tài khoản, giới thiệu và nguồn dữ liệu |
 
 Khách vẫn làm bài được. Khi đăng nhập, các lượt làm trước đó được tự động gắn vào tài khoản.
@@ -49,6 +51,6 @@ src/
     attempt/             màn làm bài, bảng câu hỏi, trang kết quả
     question/            hiển thị đề tiếng Nhật (《》 gạch chân, （　）ô trống, ★), đáp án, lưu, báo lỗi
     charts/              biểu đồ cột theo ngày, thanh ngang
-    auth/ layout/ level/ exam/ practice/ me/ home/
+    auth/ layout/ level/ exam/ practice/ me/ home/ admin/
   lib/                   api client, serverApi (chuyển tiếp cookie), types, hằng số JLPT, định dạng
 ```
