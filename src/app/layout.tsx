@@ -1,5 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans_JP } from "next/font/google";
+import { AuthProvider } from "@/components/auth/auth-provider";
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +26,15 @@ export const metadata: Metadata = {
     default: "GODA JLPT — Luyện đề JLPT N5–N1",
     template: "%s | GODA JLPT",
   },
-  description: "Web luyện đề thi năng lực tiếng Nhật JLPT từ N5 đến N1.",
+  description:
+    "Luyện đề thi năng lực tiếng Nhật JLPT N5–N1: đề thi thử theo cấu trúc thật, luyện theo dạng bài, chấm điểm và giải thích chi tiết.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f6f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0e" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -32,7 +43,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="vi"
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansJp.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        <AuthProvider>
+          <Header />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
+        </AuthProvider>
+      </body>
     </html>
   );
 }
