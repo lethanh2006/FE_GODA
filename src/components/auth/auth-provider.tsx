@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo } from "react";
 import useSWR, { SWRConfig, useSWRConfig } from "swr";
-import { api, ApiError, fetcher } from "@/lib/api";
+import { api, fetcher } from "@/lib/api";
 import { clearGuestAttempts, getGuestAttempts } from "@/lib/guest";
 import type { User } from "@/lib/types";
 
@@ -17,18 +17,15 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-async function fetchMe(): Promise<User | null> {
-  try {
-    return await api<User>("/auth/me");
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) return null;
-    throw error;
-  }
+/** /auth/session trả { user: null } cho khách thay vì 401. */
+async function fetchSession(): Promise<User | null> {
+  const { user } = await api<{ user: User | null }>("/auth/session");
+  return user;
 }
 
 function AuthState({ children }: { children: React.ReactNode }) {
   const { mutate: globalMutate } = useSWRConfig();
-  const { data, isLoading, mutate } = useSWR("/auth/me", fetchMe, {
+  const { data, isLoading, mutate } = useSWR("/auth/session", fetchSession, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
@@ -42,7 +39,7 @@ function AuthState({ children }: { children: React.ReactNode }) {
         clearGuestAttempts();
       }
       // Làm mới mọi dữ liệu phụ thuộc người dùng (tiến độ đề, thống kê…).
-      await globalMutate((key) => key !== "/auth/me", undefined, { revalidate: true });
+      await globalMutate((key) => key !== "/auth/session", undefined, { revalidate: true });
       return user;
     },
     [mutate, globalMutate],
@@ -63,7 +60,7 @@ function AuthState({ children }: { children: React.ReactNode }) {
       logout: async () => {
         await api("/auth/logout", { method: "POST" });
         await mutate(null, { revalidate: false });
-        await globalMutate((key) => key !== "/auth/me", undefined, { revalidate: false });
+        await globalMutate((key) => key !== "/auth/session", undefined, { revalidate: false });
       },
       updateUser: (user) => void mutate(user, { revalidate: false }),
     }),

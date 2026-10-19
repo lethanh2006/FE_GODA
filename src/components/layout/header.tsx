@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-card/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight" onClick={() => setMobileOpen(false)}>
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold tracking-tight whitespace-nowrap" onClick={() => setMobileOpen(false)}>
           <span className="jp flex size-8 items-center justify-center rounded-lg bg-red-600 text-sm leading-none text-white">
             合
           </span>
@@ -104,9 +104,11 @@ function UserMenu() {
         <ButtonLink href="/login" variant="ghost" size="sm">
           Đăng nhập
         </ButtonLink>
-        <ButtonLink href="/register" size="sm" className="hidden sm:inline-flex">
-          Đăng ký
-        </ButtonLink>
+        <span className="hidden sm:inline-flex">
+          <ButtonLink href="/register" size="sm">
+            Đăng ký
+          </ButtonLink>
+        </span>
       </div>
     );
   }

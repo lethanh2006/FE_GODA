@@ -389,7 +389,7 @@ function Runner({ view }: { view: AttemptView }) {
                 content={passage.content}
                 title={passage.title}
                 highlightBlank={blank}
-                className="lg:sticky lg:top-32 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto [&_.jp]:text-(length:--q-size)"
+                className="max-h-[45vh] overflow-y-auto lg:sticky lg:top-32 lg:max-h-[calc(100vh-10rem)] [&_.jp]:text-(length:--q-size)"
               />
             )}
 
