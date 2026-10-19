@@ -1,25 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f6f4;
+  --foreground: #1a1a1e;
+  --card: #ffffff;
+  --muted: #6b6b76;
+  --subtle: #efeff1;
+  --border: #e3e3e8;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-soft: #eef0ff;
+  --primary-foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b0e;
+    --foreground: #ececf1;
+    --card: #15151a;
+    --muted: #a0a0ad;
+    --subtle: #22222a;
+    --border: #2a2a33;
+    --primary: #6d6af5;
+    --primary-hover: #8583f8;
+    --primary-soft: #1d1c3a;
+    --primary-foreground: #ffffff;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), var(--font-noto-sans-jp), sans-serif;
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  --font-sans: var(--font-geist-sans), var(--font-noto-sans-jp), system-ui, sans-serif;
+  --font-jp: var(--font-noto-sans-jp), var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Văn bản tiếng Nhật: dòng thoáng hơn để dễ đọc đề. */
+.jp {
+  font-family: var(--font-jp);
+  line-height: 1.9;
+  font-feature-settings: "palt" 0;
+}
+
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.45);
 }
