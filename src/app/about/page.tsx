@@ -57,8 +57,17 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold">Về điểm ước tính</h2>
         <p className="text-sm leading-7 text-muted">
           JLPT dùng điểm quy đổi (尺度得点) nên không thể tính chính xác từ số câu đúng. GODA ước tính điểm theo tỷ lệ
-          câu đúng của từng phần, so với điểm liệt và ngưỡng đỗ quy đổi trên các phần đã thi. Phần Nghe hiểu (聴解) chưa
-          được hỗ trợ nên điểm chỉ mang tính tham khảo.
+          câu đúng của từng nhóm điểm, so với điểm liệt và điểm đỗ chính thức. Nếu chỉ làm một phần của đề, ngưỡng đỗ
+          được quy đổi theo tỷ lệ trên các phần đã làm — điểm chỉ mang tính tham khảo.
+        </p>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Về phần Nghe hiểu</h2>
+        <p className="text-sm leading-7 text-muted">
+          Bài nghe được đọc bằng giọng tiếng Nhật có sẵn trong trình duyệt (Web Speech API), mỗi vai một giọng hoặc cao độ
+          khác nhau. Chất lượng giọng phụ thuộc thiết bị: Chrome / Edge trên Windows, macOS, Android và Safari trên iOS đều
+          có giọng tiếng Nhật. Script hiện sau khi xem đáp án hoặc nộp bài.
         </p>
       </section>
 

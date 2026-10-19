@@ -5,6 +5,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { BookmarkButton } from "@/components/question/bookmark-button";
 import { JpText, PassageBox } from "@/components/question/jp-text";
+import { ListeningPlayer } from "@/components/question/listening-player";
 import { OptionList } from "@/components/question/option-list";
 import { Badge, LevelBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState, ErrorNotice, PageLoading } from "@/components/ui/feedback";
 import { Segmented } from "@/components/ui/switch";
 import { useStartAttempt } from "@/lib/attempts";
-import { LEVELS, QUESTION_TYPES } from "@/lib/jlpt";
+import { isListening, LEVELS, QUESTION_TYPES, SPOKEN_OPTIONS } from "@/lib/jlpt";
 import type { BookmarkItem, JlptLevel } from "@/lib/types";
 
 export function Bookmarks() {
@@ -63,7 +64,14 @@ export function Bookmarks() {
                   <BookmarkButton questionId={q.id} initial onChange={(saved) => !saved && void mutate()} />
                 </span>
               </div>
-              {q.passage && (
+              {q.passage && isListening(q.type) && (
+                <ListeningPlayer
+                  script={q.passage.content}
+                  spokenOptions={SPOKEN_OPTIONS.has(q.type) ? q.options : undefined}
+                  showTranscript={show}
+                />
+              )}
+              {q.passage && !isListening(q.type) && (
                 <details className="rounded-lg border border-border">
                   <summary className="cursor-pointer px-3 py-2 text-sm text-muted">Bài đọc</summary>
                   <PassageBox content={q.passage.content} title={q.passage.title} className="m-2 mt-0" />

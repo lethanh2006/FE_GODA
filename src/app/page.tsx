@@ -12,7 +12,7 @@ const features = [
   {
     icon: BookOpenCheck,
     title: "Luyện theo dạng bài",
-    text: "15 dạng: 漢字読み, 表記, 文脈規定, 文法, 並べ替え, 読解… Chọn xong là biết đúng sai, có giải thích ngay.",
+    text: "21 dạng: 漢字読み, 表記, 文脈規定, 文法, 並べ替え, 読解, 聴解… Chọn xong là biết đúng sai, có giải thích ngay.",
   },
   {
     icon: RefreshCcw,
@@ -67,7 +67,7 @@ export default function Home() {
       <section className="rounded-2xl border border-border bg-card p-6 sm:p-8">
         <h2 className="text-xl font-semibold">Cấu trúc đề JLPT</h2>
         <p className="mt-1 text-sm text-muted">
-          Đề gồm 3 phần thi. GODA JLPT hiện hỗ trợ phần Kiến thức ngôn ngữ và Đọc hiểu; phần Nghe hiểu (聴解) sẽ được bổ sung sau.
+          Đề gồm 3 phần thi. Phần Nghe hiểu (聴解) được đọc bằng giọng tiếng Nhật có sẵn trong trình duyệt — nên dùng Chrome, Edge hoặc Safari.
         </p>
         <div className="mt-5 overflow-x-auto">
           <table className="w-full min-w-[560px] text-left text-sm">

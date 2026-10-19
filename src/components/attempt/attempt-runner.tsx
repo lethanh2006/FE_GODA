@@ -20,6 +20,7 @@ import useSWR, { useSWRConfig } from "swr";
 import { useAuth } from "@/components/auth/auth-provider";
 import { BookmarkButton } from "@/components/question/bookmark-button";
 import { blankNumber, JpText, PassageBox } from "@/components/question/jp-text";
+import { ListeningPlayer } from "@/components/question/listening-player";
 import { OptionList } from "@/components/question/option-list";
 import { ReportButton } from "@/components/question/report-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +31,7 @@ import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { formatClock } from "@/lib/format";
 import { rememberGuestAttempt } from "@/lib/guest";
-import { SOURCE_LABEL } from "@/lib/jlpt";
+import { isListening, SOURCE_LABEL, SPOKEN_OPTIONS } from "@/lib/jlpt";
 import type { AttemptView, RevealResult } from "@/lib/types";
 import { QuestionNavigator, type EntryState } from "./question-navigator";
 import { useAttemptEntries, type AttemptEntry } from "./use-attempt-entries";
@@ -105,6 +106,8 @@ function Runner({ view }: { view: AttemptView }) {
   const [navOpen, setNavOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [revealError, setRevealError] = useState<string | null>(null);
+  /** Câu nghe mà người học chọn hiện chữ các lựa chọn (mặc định ẩn như đề thật). */
+  const [optionTextShown, setOptionTextShown] = useState<Set<string>>(() => new Set());
   // Runner chỉ render phía client (sau khi tải đề) nên đọc localStorage ở initializer là an toàn.
   const [fontStep, setFontStep] = useState(() => {
     try {
@@ -307,6 +310,9 @@ function Runner({ view }: { view: AttemptView }) {
   const reveal = reveals[question.id];
   const passage = question.passageId ? view.passages[question.passageId] : undefined;
   const blank = blankNumber(question.prompt);
+  const listening = isListening(question.type);
+  const spokenOptions = SPOKEN_OPTIONS.has(question.type);
+  const hideOptionText = spokenOptions && !reveal && !optionTextShown.has(question.id);
   const lowTime = remaining !== null && remaining <= 300;
   const isLast = current === entries.length - 1;
 
@@ -382,8 +388,8 @@ function Runner({ view }: { view: AttemptView }) {
             <p className="text-xs text-muted">{entry.mondai.instructionVi}</p>
           </div>
 
-          <div className={cn("grid gap-5", passage && "lg:grid-cols-2")}>
-            {passage && (
+          <div className={cn("grid gap-5", passage && !listening && "lg:grid-cols-2")}>
+            {passage && !listening && (
               <PassageBox
                 key={passage.id}
                 content={passage.content}
@@ -394,6 +400,14 @@ function Runner({ view }: { view: AttemptView }) {
             )}
 
             <div className="min-w-0 space-y-4">
+              {passage && listening && (
+                <ListeningPlayer
+                  key={question.id}
+                  script={passage.content}
+                  spokenOptions={spokenOptions ? question.options : undefined}
+                  showTranscript={!!reveal}
+                />
+              )}
               <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <span className="text-sm font-semibold text-muted">Câu {entry.number}</span>
@@ -424,15 +438,25 @@ function Runner({ view }: { view: AttemptView }) {
                     <JpText text={question.prompt} className="block" />
                   )}
                 </div>
-                <div className="[&_.jp]:text-(length:--q-size)">
+                <div key={question.id} className="[&_.jp]:text-(length:--q-size)">
                   <OptionList
                     options={question.options}
                     selectedIndex={answer?.selectedIndex ?? null}
                     answerIndex={reveal?.answerIndex}
                     onSelect={(index) => void select(entry, index)}
                     disabled={!!reveal || submitting}
+                    hideText={hideOptionText}
                   />
                 </div>
+                {hideOptionText && (
+                  <button
+                    type="button"
+                    className="mt-3 text-xs text-muted underline hover:text-foreground"
+                    onClick={() => setOptionTextShown((prev) => new Set(prev).add(question.id))}
+                  >
+                    Các lựa chọn được đọc trong bài nghe — hiện chữ để luyện dễ hơn
+                  </button>
+                )}
                 {revealError && <p className="mt-3 text-sm text-red-600">{revealError}</p>}
               </div>
 

@@ -74,6 +74,7 @@ export const SKILL_GROUPS: Record<SkillGroup, { nameJa: string; nameVi: string }
   vocabulary: { nameJa: "文字・語彙", nameVi: "Chữ – Từ vựng" },
   grammar: { nameJa: "文法", nameVi: "Ngữ pháp" },
   reading: { nameJa: "読解", nameVi: "Đọc hiểu" },
+  listening: { nameJa: "聴解", nameVi: "Nghe hiểu" },
 };
 
 export const QUESTION_TYPES: Record<QuestionType, { nameJa: string; nameVi: string; group: SkillGroup }> = {
@@ -92,7 +93,18 @@ export const QUESTION_TYPES: Record<QuestionType, { nameJa: string; nameVi: stri
   READING_INTEGRATED: { nameJa: "統合理解", nameVi: "Đọc hiểu tổng hợp (A–B)", group: "reading" },
   READING_THEMATIC: { nameJa: "主張理解（長文）", nameVi: "Đọc hiểu quan điểm tác giả", group: "reading" },
   INFO_RETRIEVAL: { nameJa: "情報検索", nameVi: "Tìm kiếm thông tin", group: "reading" },
+  LISTEN_TASK: { nameJa: "課題理解", nameVi: "Hiểu nhiệm vụ", group: "listening" },
+  LISTEN_POINT: { nameJa: "ポイント理解", nameVi: "Hiểu điểm chính", group: "listening" },
+  LISTEN_SUMMARY: { nameJa: "概要理解", nameVi: "Hiểu khái quát", group: "listening" },
+  LISTEN_UTTERANCE: { nameJa: "発話表現", nameVi: "Diễn đạt bằng lời", group: "listening" },
+  LISTEN_RESPONSE: { nameJa: "即時応答", nameVi: "Phản xạ nhanh", group: "listening" },
+  LISTEN_INTEGRATED: { nameJa: "統合理解", nameVi: "Nghe hiểu tổng hợp", group: "listening" },
 };
+
+export const isListening = (type: QuestionType) => QUESTION_TYPES[type].group === "listening";
+
+/** Dạng nghe mà đề thật không in lựa chọn: lựa chọn được đọc to sau bài nghe. */
+export const SPOKEN_OPTIONS = new Set<QuestionType>(["LISTEN_SUMMARY", "LISTEN_UTTERANCE", "LISTEN_RESPONSE"]);
 
 export const SOURCE_LABEL: Record<string, string> = {
   goda: "GODA biên soạn",

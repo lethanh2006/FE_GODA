@@ -15,6 +15,7 @@ export function OptionList({
   onSelect,
   disabled,
   compact,
+  hideText,
 }: {
   options: string[];
   selectedIndex: number | null;
@@ -22,12 +23,14 @@ export function OptionList({
   onSelect?: (index: number) => void;
   disabled?: boolean;
   compact?: boolean;
+  /** Chỉ hiện số thứ tự (lựa chọn được đọc trong bài nghe). */
+  hideText?: boolean;
 }) {
   const graded = answerIndex !== undefined;
   const longOptions = options.some((o) => o.length > 18);
 
   return (
-    <div className={cn("grid gap-2", !longOptions && !compact && "sm:grid-cols-2")}>
+    <div className={cn("grid gap-2", hideText ? "grid-cols-3 sm:grid-cols-4" : !longOptions && !compact && "sm:grid-cols-2")}>
       {options.map((option, index) => {
         const selected = selectedIndex === index;
         const correct = graded && index === answerIndex;
@@ -61,7 +64,11 @@ export function OptionList({
             >
               {correct ? <Check className="size-4" /> : wrong ? <X className="size-4" /> : index + 1}
             </span>
-            <JpText text={option} className="min-w-0 flex-1 break-words text-[15px] sm:text-base" />
+            {hideText ? (
+              <span className="flex-1 text-sm text-muted">Phương án {index + 1}</span>
+            ) : (
+              <JpText text={option} className="min-w-0 flex-1 break-words text-[15px] sm:text-base" />
+            )}
           </button>
         );
       })}

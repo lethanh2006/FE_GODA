@@ -15,9 +15,15 @@ export type QuestionType =
   | "READING_LONG"
   | "READING_INTEGRATED"
   | "READING_THEMATIC"
-  | "INFO_RETRIEVAL";
+  | "INFO_RETRIEVAL"
+  | "LISTEN_TASK"
+  | "LISTEN_POINT"
+  | "LISTEN_SUMMARY"
+  | "LISTEN_UTTERANCE"
+  | "LISTEN_RESPONSE"
+  | "LISTEN_INTEGRATED";
 
-export type SkillGroup = "vocabulary" | "grammar" | "reading";
+export type SkillGroup = "vocabulary" | "grammar" | "reading" | "listening";
 export type AttemptMode = "EXAM" | "PRACTICE";
 export type AttemptStatus = "IN_PROGRESS" | "SUBMITTED";
 
@@ -38,6 +44,7 @@ export interface QuestionTypeMeta {
   instruction: string;
   instructionVi: string;
   hasPassage: boolean;
+  spokenOptions: boolean;
 }
 
 export interface LevelOverview {
@@ -48,7 +55,6 @@ export interface LevelOverview {
   questionTypes: { type: QuestionType; count: number }[];
   examMinutes: number;
   examQuestions: number;
-  listeningMinutes: number;
 }
 
 export interface Catalog {

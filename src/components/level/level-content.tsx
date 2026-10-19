@@ -60,7 +60,7 @@ export async function LevelContent({ level }: { level: JlptLevel }) {
         {groups.length === 0 ? (
           <EmptyState title="Chưa có câu hỏi cho cấp độ này" />
         ) : (
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {groups.map(({ group, types: groupTypes }) => (
               <div key={group} className="space-y-3">
                 <h3 className="text-sm font-semibold">

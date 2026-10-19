@@ -41,7 +41,8 @@ async function ExamContent({ params }: { params: PageProps<"/exams/[slug]">["par
         <h1 className="text-3xl font-bold tracking-tight">{exam.title}</h1>
         {exam.description && <p className="max-w-3xl text-muted">{exam.description}</p>}
         <p className="text-sm text-muted">
-          {exam.totalQuestions} câu · {exam.totalMinutes} phút · chưa gồm phần Nghe hiểu (聴解)
+          {exam.totalQuestions} câu · {exam.totalMinutes} phút
+          {!exam.sections.some((s) => s.title === "聴解") && " · chưa gồm phần Nghe hiểu (聴解)"}
         </p>
       </div>
 

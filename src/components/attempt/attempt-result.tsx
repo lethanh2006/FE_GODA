@@ -17,6 +17,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { BarList } from "@/components/charts/bar-list";
 import { BookmarkButton } from "@/components/question/bookmark-button";
 import { blankNumber, JpText, PassageBox } from "@/components/question/jp-text";
+import { ListeningPlayer } from "@/components/question/listening-player";
 import { OptionList } from "@/components/question/option-list";
 import { ReportButton } from "@/components/question/report-dialog";
 import { Badge, LevelBadge } from "@/components/ui/badge";
@@ -28,7 +29,7 @@ import { ApiError } from "@/lib/api";
 import { useStartAttempt } from "@/lib/attempts";
 import { cn } from "@/lib/cn";
 import { formatDateTime, formatDuration, formatPercent } from "@/lib/format";
-import { SOURCE_LABEL } from "@/lib/jlpt";
+import { isListening, SOURCE_LABEL, SPOKEN_OPTIONS } from "@/lib/jlpt";
 import type { AttemptView } from "@/lib/types";
 import { useAttemptEntries, type AttemptEntry } from "./use-attempt-entries";
 
@@ -273,7 +274,14 @@ function ReviewItem({ entry, view, showPassage }: { entry: AttemptEntry; view: A
 
   return (
     <div className="space-y-3">
-      {showPassage && passage && (
+      {showPassage && passage && isListening(q.type) && (
+        <ListeningPlayer
+          script={passage.content}
+          spokenOptions={SPOKEN_OPTIONS.has(q.type) ? q.options : undefined}
+          showTranscript
+        />
+      )}
+      {showPassage && passage && !isListening(q.type) && (
         <details className="group rounded-xl border border-border bg-card" open={false}>
           <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-muted hover:text-foreground">
             Bài đọc ({entry.mondai.nameJa}) — bấm để xem
