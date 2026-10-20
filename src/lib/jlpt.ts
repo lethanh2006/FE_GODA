@@ -12,6 +12,8 @@ interface LevelMeta {
   vocab: string;
   /** Độ khó 1–5 (N5 = 1). */
   difficulty: number;
+  /** Điểm đỗ tổng (thang 180). */
+  passScore: number;
 }
 
 export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
@@ -21,6 +23,7 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     kanji: "~100 Kanji",
     vocab: "~800 từ",
     difficulty: 1,
+    passScore: 80,
   },
   N4: {
     name: "Sơ cấp 2",
@@ -28,6 +31,7 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     kanji: "~300 Kanji",
     vocab: "~1.500 từ",
     difficulty: 2,
+    passScore: 90,
   },
   N3: {
     name: "Trung cấp",
@@ -35,6 +39,7 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     kanji: "~650 Kanji",
     vocab: "~3.700 từ",
     difficulty: 3,
+    passScore: 95,
   },
   N2: {
     name: "Trung cao cấp",
@@ -42,6 +47,7 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     kanji: "~1.000 Kanji",
     vocab: "~6.000 từ",
     difficulty: 4,
+    passScore: 90,
   },
   N1: {
     name: "Cao cấp",
@@ -49,6 +55,7 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     kanji: "~2.000 Kanji",
     vocab: "~10.000 từ",
     difficulty: 5,
+    passScore: 100,
   },
 };
 
