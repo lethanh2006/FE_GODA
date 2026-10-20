@@ -160,7 +160,7 @@ const SAMPLE_OPTIONS = ["にもつ", "にもの", "かもつ", "かもの"];
 function SampleQuestion() {
   return (
     <div className="relative" aria-hidden>
-      <div className="absolute -inset-3 -z-10 rotate-2 rounded-2xl border border-border bg-subtle/70 sm:-inset-4" />
+      <div className="absolute -inset-4 -z-10 hidden rotate-2 rounded-2xl border border-border bg-subtle/70 sm:block" />
       <div className="exam-paper overflow-hidden rounded-xl border border-border bg-card shadow-xl shadow-black/[0.05]">
         <div className="flex items-center justify-between border-b border-border px-5 py-3 text-xs">
           <span className="jp font-medium">JLPT N4 · 言語知識（文字・語彙）</span>

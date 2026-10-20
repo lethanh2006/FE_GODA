@@ -88,20 +88,23 @@ export function ColumnChart({
         <span>{data[0]?.label}</span>
         <span>{data.at(-1)?.label}</span>
       </div>
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.key}>
-              <th scope="row">{d.label}</th>
-              <td>
-                {d.value} {unit}
-                {d.detail ? ` (${d.detail})` : ""}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Bảng không co về 1px như phần tử thường nên bọc trong div sr-only để không gây tràn ngang. */}
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.key}>
+                <th scope="row">{d.label}</th>
+                <td>
+                  {d.value} {unit}
+                  {d.detail ? ` (${d.detail})` : ""}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

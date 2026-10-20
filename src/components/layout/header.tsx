@@ -198,9 +198,12 @@ function UserMenu() {
         <ButtonLink href="/login" variant="ghost" size="sm">
           Đăng nhập
         </ButtonLink>
-        <ButtonLink href="/register" size="sm" className="hidden sm:inline-flex">
-          Đăng ký
-        </ButtonLink>
+        {/* Bọc span: lớp "hidden" đặt thẳng lên nút sẽ xung đột với "inline-flex" sẵn có của nút. */}
+        <span className="hidden sm:inline-flex">
+          <ButtonLink href="/register" size="sm">
+            Đăng ký
+          </ButtonLink>
+        </span>
       </div>
     );
   }
