@@ -29,9 +29,9 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-strong/70 px-6 py-14 text-center">
       {icon && <div className="text-muted">{icon}</div>}
-      <p className="font-medium">{title}</p>
+      <p className="font-semibold">{title}</p>
       {description && <p className="max-w-md text-sm text-muted">{description}</p>}
       {action}
     </div>
