@@ -1,6 +1,5 @@
 "use client";
 
-import { Flag } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -44,7 +43,7 @@ export function ReportButton({ questionId, className }: { questionId: string; cl
         }}
         className={cn("inline-flex items-center gap-1 text-xs text-muted hover:text-foreground", className)}
       >
-        <Flag className="size-3.5" /> Báo lỗi
+        Báo lỗi
       </button>
       <Dialog open={open} onClose={() => setOpen(false)} title="Báo lỗi câu hỏi">
         {state === "sent" ? (

@@ -1,6 +1,5 @@
 "use client";
 
-import { BookMarked, Play } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
 import { BookmarkButton } from "@/components/question/bookmark-button";
@@ -37,7 +36,7 @@ export function Bookmarks() {
               start({ kind: "practice", focus: "bookmarks", level: level === "all" ? undefined : level, count: 50 })
             }
           >
-            <Play className="size-4" /> {pending ? "Đang tạo…" : "Luyện các câu đã lưu"}
+            {pending ? "Đang tạo…" : "Luyện các câu đã lưu"}
           </Button>
         )}
       </div>
@@ -46,7 +45,6 @@ export function Bookmarks() {
       {!data && !error && <PageLoading />}
       {data && data.length === 0 && (
         <EmptyState
-          icon={<BookMarked className="size-8" />}
           title="Chưa có câu hỏi nào được lưu"
           description="Bấm “Lưu” ở câu hỏi khi xem đáp án hoặc khi xem lại bài làm để ôn lại sau."
         />
@@ -74,11 +72,13 @@ export function Bookmarks() {
               {q.passage && !isListening(q.type) && (
                 <details className="rounded-lg border border-border">
                   <summary className="cursor-pointer px-3 py-2 text-sm text-muted">Bài đọc</summary>
-                  <PassageBox content={q.passage.content} title={q.passage.title} className="m-2 mt-0" />
+                  <PassageBox content={q.passage.content} title={q.passage.title} className="exam-paper m-2 mt-0" />
                 </details>
               )}
-              <JpText text={q.prompt} className="block" />
-              <OptionList options={q.options} selectedIndex={null} answerIndex={show ? q.answerIndex : undefined} compact />
+              <div className="exam-paper space-y-3">
+                <JpText text={q.prompt} className="block" />
+                <OptionList options={q.options} selectedIndex={null} answerIndex={show ? q.answerIndex : undefined} compact />
+              </div>
               {show ? (
                 q.explanation && (
                   <div className="rounded-lg bg-subtle p-3 text-sm">

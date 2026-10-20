@@ -1,6 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -106,9 +105,7 @@ export function SettingsForm() {
             {state === "saving" ? "Đang lưu…" : "Lưu thay đổi"}
           </Button>
           {state === "saved" && !dirty && (
-            <span className="flex items-center gap-1 text-sm text-success">
-              <Check className="size-4" /> Đã lưu
-            </span>
+            <span className="text-sm font-medium text-success">Đã lưu</span>
           )}
           {error && <span className="text-sm text-danger">{error}</span>}
         </div>

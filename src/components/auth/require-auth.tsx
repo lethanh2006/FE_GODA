@@ -1,6 +1,5 @@
 "use client";
 
-import { LogIn } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, PageLoading } from "@/components/ui/feedback";
 import { useAuth } from "./auth-provider";
@@ -11,7 +10,6 @@ export function RequireAuth({ next, children }: { next: string; children: React.
   if (!user) {
     return (
       <EmptyState
-        icon={<LogIn className="size-8" />}
         title="Đăng nhập để xem mục này"
         description="Tiến độ, lịch sử làm bài và câu hỏi đã lưu được gắn với tài khoản của bạn."
         action={

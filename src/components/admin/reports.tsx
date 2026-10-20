@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, ShieldAlert, X } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -51,7 +50,7 @@ export function AdminReports() {
 
   if (isLoading) return <PageLoading />;
   if (user?.role !== "ADMIN") {
-    return <EmptyState icon={<ShieldAlert className="size-8" />} title="Chỉ quản trị viên mới xem được trang này" />;
+    return <EmptyState title="Chỉ quản trị viên mới xem được trang này" />;
   }
 
   const setReportStatus = async (id: string, next: ReportStatus) => {
@@ -93,20 +92,22 @@ export function AdminReports() {
               {report.user ? `${report.user.displayName} (${report.user.email})` : "Khách"}
             </p>
           </div>
-          <JpText text={report.question.prompt} className="block" />
-          <OptionList
-            options={report.question.options}
-            selectedIndex={null}
-            answerIndex={report.question.answerIndex}
-            compact
-          />
+          <div className="exam-paper space-y-3">
+            <JpText text={report.question.prompt} className="block" />
+            <OptionList
+              options={report.question.options}
+              selectedIndex={null}
+              answerIndex={report.question.answerIndex}
+              compact
+            />
+          </div>
           {report.status === "OPEN" && (
             <div className="flex gap-2">
               <Button size="sm" variant="success" disabled={busy === report.id} onClick={() => setReportStatus(report.id, "RESOLVED")}>
-                <Check className="size-4" /> Đã sửa
+                Đánh dấu đã sửa
               </Button>
               <Button size="sm" variant="secondary" disabled={busy === report.id} onClick={() => setReportStatus(report.id, "REJECTED")}>
-                <X className="size-4" /> Bỏ qua
+                Bỏ qua
               </Button>
             </div>
           )}

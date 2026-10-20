@@ -1,6 +1,5 @@
 "use client";
 
-import { Crosshair, Flame, PlayCircle, RotateCcw, Target, Timer, TrendingUp } from "lucide-react";
 import useSWR from "swr";
 import { useAuth } from "@/components/auth/auth-provider";
 import { BarList } from "@/components/charts/bar-list";
@@ -35,7 +34,6 @@ export function Dashboard() {
   if (totals.attempts === 0 && stats.inProgress.length === 0) {
     return (
       <EmptyState
-        icon={<TrendingUp className="size-8" />}
         title={`Chào ${user?.displayName ?? "bạn"}! Bạn chưa làm bài nào.`}
         description="Làm một đề thi thử hoặc vài câu luyện tập để bắt đầu theo dõi tiến độ."
         action={
@@ -51,10 +49,10 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile icon={<Target className="size-4" />} label="Độ chính xác" value={formatPercent(totals.accuracy !== null ? totals.accuracy * 100 : null)} hint={`${formatNumber(totals.correct)}/${formatNumber(totals.answered)} câu đúng`} />
-        <StatTile icon={<TrendingUp className="size-4" />} label="Bài đã nộp" value={formatNumber(totals.attempts)} hint={`${formatNumber(totals.distinctQuestions)} câu khác nhau`} />
-        <StatTile icon={<Timer className="size-4" />} label="Thời gian học" value={formatDuration(totals.studySeconds)} hint="Tổng thời gian làm bài" />
-        <StatTile icon={<Flame className="size-4" />} label="Chuỗi ngày học" value={`${totals.streakDays} ngày`} hint={totals.streakDays ? "Giữ vững nhé!" : "Làm 1 bài hôm nay để bắt đầu"} />
+        <StatTile label="Độ chính xác" value={formatPercent(totals.accuracy !== null ? totals.accuracy * 100 : null)} hint={`${formatNumber(totals.correct)}/${formatNumber(totals.answered)} câu đúng`} />
+        <StatTile label="Bài đã nộp" value={formatNumber(totals.attempts)} hint={`${formatNumber(totals.distinctQuestions)} câu khác nhau`} />
+        <StatTile label="Thời gian học" value={formatDuration(totals.studySeconds)} hint="Tổng thời gian làm bài" />
+        <StatTile label="Chuỗi ngày học" value={`${totals.streakDays} ngày`} hint={totals.streakDays ? "Giữ vững nhé!" : "Làm 1 bài hôm nay để bắt đầu"} />
       </div>
 
       <TargetBanner />
@@ -66,7 +64,7 @@ export function Dashboard() {
             {stats.inProgress.map((a) => (
               <li key={a.id}>
                 <ButtonLink href={`/attempts/${a.id}`} variant="secondary" size="sm">
-                  <PlayCircle className="size-4" /> <LevelBadge level={a.level} /> {a.title}
+                  <LevelBadge level={a.level} /> {a.title}
                 </ButtonLink>
               </li>
             ))}
@@ -102,7 +100,7 @@ export function Dashboard() {
                   disabled={pending !== null}
                   onClick={() => start({ kind: "practice", focus: "mistakes", count: 20 }, "mistakes")}
                 >
-                  <RotateCcw className="size-4" /> {pending === "mistakes" ? "…" : `Ôn ${totals.mistakes} câu sai`}
+                  {pending === "mistakes" ? "Đang tạo…" : `Ôn ${totals.mistakes} câu sai`}
                 </Button>
               ) : undefined
             }
@@ -174,12 +172,12 @@ export function Dashboard() {
   );
 }
 
-function StatTile({ icon, label, value, hint }: { icon: React.ReactNode; label: string; value: string; hint: string }) {
+function StatTile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <Card className="p-4">
-      <p className="flex items-center gap-1.5 text-sm text-muted">{icon} {label}</p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
-      <p className="mt-1 text-xs text-muted">{hint}</p>
+    <Card className="p-5">
+      <p className="text-sm font-medium text-muted">{label}</p>
+      <p className="mt-2 text-[1.75rem] leading-none font-bold tracking-tight tabular-nums">{value}</p>
+      <p className="mt-2 text-xs text-muted">{hint}</p>
     </Card>
   );
 }
@@ -191,10 +189,8 @@ function TargetBanner() {
 
   if (!level) {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border p-4 text-sm">
-        <span className="flex items-center gap-2 text-muted">
-          <Crosshair className="size-4" /> Chọn cấp độ mục tiêu để nhận gợi ý luyện tập phù hợp.
-        </span>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border-strong/70 p-4 text-sm">
+        <span className="text-muted">Chọn cấp độ mục tiêu để nhận gợi ý luyện tập phù hợp.</span>
         <ButtonLink href="/settings" size="sm" variant="secondary">Chọn mục tiêu</ButtonLink>
       </div>
     );
@@ -202,10 +198,10 @@ function TargetBanner() {
 
   return (
     <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-      <div className="flex items-center gap-3">
-        <Crosshair className="size-5 text-primary" />
-        <div>
-          <p className="text-sm font-medium">Mục tiêu: JLPT {level} · {LEVEL_META[level].name}</p>
+      <div className="flex items-center gap-4">
+        <span className="text-2xl font-bold tracking-tight text-primary">{level}</span>
+        <div className="border-l border-border pl-4">
+          <p className="text-sm font-semibold">Mục tiêu: JLPT {level} · {LEVEL_META[level].name}</p>
           <p className="text-xs text-muted">Luyện đều mỗi ngày một bài ngắn sẽ hiệu quả hơn học dồn.</p>
         </div>
       </div>

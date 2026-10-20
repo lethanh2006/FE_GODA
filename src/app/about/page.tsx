@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = { title: "Giới thiệu & nguồn dữ liệu" };
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-10">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Giới thiệu & nguồn dữ liệu</h1>
-        <p className="mt-2 text-muted">
-          GODA JLPT là nền tảng luyện đề thi năng lực tiếng Nhật (JLPT) cho người Việt. Trang web không liên kết với
-          Japan Foundation hay JEES — đơn vị tổ chức kỳ thi JLPT.
-        </p>
-      </div>
+    <main className="mx-auto w-full max-w-3xl space-y-10 px-4 pt-10 pb-8">
+      <PageHeader
+        title="Giới thiệu & nguồn dữ liệu"
+        description="GODA JLPT là nền tảng luyện đề thi năng lực tiếng Nhật (JLPT) cho người Việt. Trang web không liên kết với Japan Foundation hay JEES — đơn vị tổ chức kỳ thi JLPT."
+      />
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Về câu hỏi</h2>
