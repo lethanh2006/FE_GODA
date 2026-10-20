@@ -1,18 +1,6 @@
 "use client";
 
-import {
-  AlertTriangle,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Flag,
-  Keyboard,
-  LayoutGrid,
-  LogOut,
-  Type,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Flag, Keyboard } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -322,49 +310,50 @@ function Runner({ view }: { view: AttemptView }) {
       style={{ "--q-size": FONT_SIZES[fontStep] } as React.CSSProperties}
     >
       {/* Thanh trên cùng */}
-      <div className="sticky top-14 z-20 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2">
+      <div className="sticky top-16 z-20 border-b border-border bg-card/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
           <Link
             href={exitHref}
-            className="flex items-center gap-1 rounded-md p-1.5 text-sm text-muted hover:bg-subtle hover:text-foreground"
+            className="flex items-center gap-1.5 rounded-md py-1.5 pr-2 text-sm text-muted hover:text-foreground"
             title="Thoát (bài làm đã được lưu, có thể làm tiếp sau)"
           >
-            <LogOut className="size-4 rotate-180" />
+            <ArrowLeft className="size-4" />
             <span className="hidden sm:inline">Thoát</span>
           </Link>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{view.title}</p>
+          <div className="min-w-0 flex-1 border-l border-border pl-3">
+            <p className="truncate text-sm font-semibold">{view.title}</p>
             <div className="flex items-center gap-2">
               <ProgressBar value={(answeredCount / entries.length) * 100} className="h-1.5 w-28 sm:w-40" />
               <span className="text-xs text-muted tabular-nums">
-                {answeredCount}/{entries.length}
+                {answeredCount}/{entries.length} câu
               </span>
               <SaveIndicator state={saveState} />
             </div>
           </div>
           <div
             className={cn(
-              "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-mono text-sm tabular-nums",
-              lowTime ? "bg-danger-soft text-danger" : "bg-subtle",
+              "flex items-baseline gap-2 rounded-lg border px-3 py-1",
+              lowTime ? "border-danger/40 bg-danger-soft text-danger" : "border-border bg-subtle/60",
             )}
-            title={remaining !== null ? "Thời gian còn lại" : "Thời gian đã làm"}
           >
-            <Clock className="size-4" />
-            {formatClock(remaining ?? elapsed)}
+            <span className="hidden text-xs text-muted sm:inline">{remaining !== null ? "Còn lại" : "Thời gian"}</span>
+            <span className="font-mono text-[15px] font-medium tabular-nums">{formatClock(remaining ?? elapsed)}</span>
           </div>
           <button
             type="button"
             onClick={cycleFont}
-            className="hidden rounded-md p-2 text-muted hover:bg-subtle hover:text-foreground sm:block"
+            className="hidden h-8 rounded-md px-2 text-sm font-semibold text-muted hover:bg-subtle hover:text-foreground sm:block"
             title="Đổi cỡ chữ"
+            aria-label="Đổi cỡ chữ"
           >
-            <Type className="size-4" />
+            Aa
           </button>
           <button
             type="button"
             onClick={() => setHelpOpen(true)}
             className="hidden rounded-md p-2 text-muted hover:bg-subtle hover:text-foreground lg:block"
             title="Phím tắt"
+            aria-label="Phím tắt"
           >
             <Keyboard className="size-4" />
           </button>
@@ -377,15 +366,19 @@ function Runner({ view }: { view: AttemptView }) {
       <div className="mx-auto grid w-full max-w-6xl flex-1 gap-6 px-4 py-6 pb-28 lg:pb-8 xl:grid-cols-[1fr_17rem]">
         <div className="min-w-0">
           {/* Tiêu đề 問題 */}
-          <div className="mb-4 space-y-1">
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              {view.sections.length > 1 && <span className="jp text-xs text-muted">{entry.section.title}</span>}
-              <span className="jp font-semibold">問題{entry.mondai.number}</span>
-              <span className="jp text-muted">{entry.mondai.nameJa}</span>
-              <Badge tone="primary">{entry.mondai.nameVi}</Badge>
+          <div className="exam-paper mb-5 space-y-2">
+            {view.sections.length > 1 && <p className="jp text-xs text-muted">{entry.section.title}</p>}
+            <div className="flex items-start gap-3">
+              <span className="jp shrink-0 border border-foreground px-1.5 text-sm leading-6 font-semibold">
+                問題{entry.mondai.number}
+              </span>
+              <div className="min-w-0">
+                <p className="jp text-[15px] leading-6">{entry.mondai.instruction}</p>
+                <p className="mt-1 text-xs text-muted">
+                  <span className="font-medium text-foreground">{entry.mondai.nameVi}</span> · {entry.mondai.instructionVi}
+                </p>
+              </div>
             </div>
-            <p className="jp text-sm text-muted">{entry.mondai.instruction}</p>
-            <p className="text-xs text-muted">{entry.mondai.instructionVi}</p>
           </div>
 
           <div className={cn("grid gap-5", passage && !listening && "lg:grid-cols-2")}>
@@ -395,7 +388,7 @@ function Runner({ view }: { view: AttemptView }) {
                 content={passage.content}
                 title={passage.title}
                 highlightBlank={blank}
-                className="max-h-[45vh] overflow-y-auto lg:sticky lg:top-32 lg:max-h-[calc(100vh-10rem)] [&_.jp]:text-(length:--q-size)"
+                className="exam-paper max-h-[45vh] overflow-y-auto lg:sticky lg:top-36 lg:max-h-[calc(100vh-11rem)] [&_.jp]:text-(length:--q-size)"
               />
             )}
 
@@ -408,17 +401,15 @@ function Runner({ view }: { view: AttemptView }) {
                   showTranscript={!!reveal}
                 />
               )}
-              <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+              <div className="exam-paper rounded-xl border border-border bg-card p-4 sm:p-6">
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-muted">Câu {entry.number}</span>
+                  <span className="text-sm font-semibold">Câu {entry.number}</span>
                   <button
                     type="button"
                     onClick={() => update(question.id, { flagged: !answer?.flagged })}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs",
-                      answer?.flagged
-                        ? "bg-warning-soft text-warning"
-                        : "text-muted hover:bg-subtle",
+                      "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium",
+                      answer?.flagged ? "bg-warning-soft text-warning" : "text-muted hover:bg-subtle hover:text-foreground",
                     )}
                     title="Đánh dấu để xem lại (phím F)"
                   >
@@ -463,18 +454,12 @@ function Runner({ view }: { view: AttemptView }) {
               {reveal && (
                 <div
                   className={cn(
-                    "rounded-xl border p-4",
-                    reveal.isCorrect
-                      ? "border-success/40 bg-success-soft"
-                      : "border-danger/40 bg-danger-soft",
+                    "rounded-xl border p-4 sm:px-5",
+                    reveal.isCorrect ? "border-success/40 bg-success-soft" : "border-danger/40 bg-danger-soft",
                   )}
                 >
-                  <p className="flex items-center gap-2 font-semibold">
-                    {reveal.isCorrect ? (
-                      <><CheckCircle2 className="size-5 text-success" /> Chính xác!</>
-                    ) : (
-                      <><XCircle className="size-5 text-danger" /> Chưa đúng — đáp án là {reveal.answerIndex + 1}</>
-                    )}
+                  <p className={cn("font-semibold", reveal.isCorrect ? "text-success" : "text-danger")}>
+                    {reveal.isCorrect ? "Chính xác" : `Chưa đúng — đáp án đúng là ${reveal.answerIndex + 1}`}
                   </p>
                   {reveal.explanation && (
                     <JpText text={reveal.explanation} className="mt-2 block text-sm" />
@@ -505,7 +490,7 @@ function Runner({ view }: { view: AttemptView }) {
         </div>
 
         <aside className="hidden xl:block">
-          <div className="sticky top-32 max-h-[calc(100vh-9rem)] overflow-y-auto rounded-xl border border-border bg-card p-4">
+          <div className="sticky top-36 max-h-[calc(100vh-10rem)] overflow-y-auto rounded-xl border border-border bg-card p-4">
             <QuestionNavigator entries={entries} current={current} stateOf={stateOf} onJump={go} />
           </div>
         </aside>
@@ -518,7 +503,7 @@ function Runner({ view }: { view: AttemptView }) {
             <ArrowLeft className="size-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setNavOpen(true)}>
-            <LayoutGrid className="size-4" /> Câu {entry.number} · {answeredCount}/{entries.length}
+            Câu {entry.number} · đã làm {answeredCount}/{entries.length}
           </Button>
           {isLast ? (
             <Button size="sm" onClick={() => setSubmitOpen(true)}>Nộp bài</Button>
@@ -558,8 +543,7 @@ function Runner({ view }: { view: AttemptView }) {
             <Stat label="Đánh dấu" value={flaggedCount} />
           </div>
           {unanswered > 0 && (
-            <p className="flex items-start gap-2 rounded-lg bg-warning-soft p-3 text-warning">
-              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <p className="rounded-lg bg-warning-soft p-3 text-warning">
               Bạn còn {unanswered} câu chưa trả lời. Các câu bỏ trống sẽ tính là sai.
             </p>
           )}

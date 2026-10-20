@@ -42,10 +42,10 @@ export function OptionList({
             disabled={disabled || !onSelect}
             onClick={() => onSelect?.(index)}
             className={cn(
-              "group flex w-full items-start gap-3 rounded-xl border px-3 text-left transition-colors",
+              "group flex w-full items-start gap-3 rounded-lg border px-3 text-left transition-colors",
               compact ? "py-2" : "py-3",
-              !graded && selected && "border-primary bg-primary-soft",
-              !graded && !selected && "border-border bg-card hover:border-primary/50 hover:bg-subtle",
+              !graded && selected && "border-primary bg-primary-soft ring-1 ring-primary",
+              !graded && !selected && "border-border bg-card hover:border-border-strong hover:bg-subtle/60",
               correct && "border-success bg-success-soft",
               wrong && "border-danger bg-danger-soft",
               graded && !correct && !wrong && "border-border bg-card opacity-80",
@@ -54,9 +54,9 @@ export function OptionList({
           >
             <span
               className={cn(
-                "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border text-sm font-semibold",
+                "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border font-sans text-sm font-semibold",
                 !graded && selected && "border-primary bg-primary text-primary-foreground",
-                !graded && !selected && "border-border text-muted group-hover:border-primary/50",
+                !graded && !selected && "border-border-strong text-muted group-hover:text-foreground",
                 correct && "border-success bg-success text-on-status",
                 wrong && "border-danger bg-danger text-on-status",
                 graded && !correct && !wrong && "border-border text-muted",

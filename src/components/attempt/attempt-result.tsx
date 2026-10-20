@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Flag,
-  RotateCcw,
-  Target,
-  Trophy,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
@@ -86,37 +77,45 @@ function ResultView({ view }: { view: AttemptView }) {
   const estimate = result.estimate;
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
-        <ButtonLink href={view.examSlug ? `/exams/${view.examSlug}` : levelHref} variant="ghost" size="sm">
+    <div className="mx-auto w-full max-w-5xl space-y-8 px-4 pt-6 pb-8">
+      <div className="space-y-3">
+        <ButtonLink href={view.examSlug ? `/exams/${view.examSlug}` : levelHref} variant="ghost" size="sm" className="-ml-3">
           <ArrowLeft className="size-4" /> Quay lại
         </ButtonLink>
-        <LevelBadge level={view.level} />
-        <Badge>{view.mode === "EXAM" ? "Thi thử" : "Luyện tập"}</Badge>
-        <span>Nộp lúc {formatDateTime(view.submittedAt)}</span>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+          <LevelBadge level={view.level} />
+          <Badge>{view.mode === "EXAM" ? "Thi thử" : "Luyện tập"}</Badge>
+          <span>Nộp lúc {formatDateTime(view.submittedAt)}</span>
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight">{view.title}</h1>
       </div>
-      <h1 className="text-2xl font-bold tracking-tight">{view.title}</h1>
 
       <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
         <Card className="p-6">
-          <p className="text-sm text-muted">Số câu đúng</p>
-          <p className="mt-1 text-5xl font-bold tracking-tight">
+          <p className="text-sm font-medium text-muted">Số câu đúng</p>
+          <p className="mt-1 text-6xl font-bold tracking-tight tabular-nums">
             {result.correctCount}
             <span className="text-2xl font-semibold text-muted">/{result.totalCount}</span>
           </p>
-          <ProgressBar value={result.scorePercent} className="mt-4" />
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
-            <span className="flex items-center gap-1.5"><Target className="size-4" /> Tỷ lệ đúng {formatPercent(result.scorePercent)}</span>
-            <span className="flex items-center gap-1.5"><Clock className="size-4" /> {formatDuration(view.timeSpentSeconds)}</span>
-            <span className="flex items-center gap-1.5"><Flag className="size-4" /> Đã làm {result.answeredCount}/{result.totalCount}</span>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
+          <ProgressBar value={result.scorePercent} className="mt-5" />
+          <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-border pt-4">
+            {[
+              { label: "Tỷ lệ đúng", value: formatPercent(result.scorePercent) },
+              { label: "Thời gian", value: formatDuration(view.timeSpentSeconds) },
+              { label: "Đã trả lời", value: `${result.answeredCount}/${result.totalCount}` },
+            ].map((item) => (
+              <div key={item.label}>
+                <dt className="text-xs text-muted">{item.label}</dt>
+                <dd className="mt-0.5 font-semibold tabular-nums">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-6 flex flex-wrap gap-2">
             {missed > 0 && (
               <Button
                 onClick={() => start({ kind: "retry", fromAttemptId: view.id, retryScope: "wrong" }, "wrong")}
                 disabled={pending !== null}
               >
-                <RotateCcw className="size-4" />
                 {pending === "wrong" ? "Đang tạo…" : `Làm lại ${missed} câu sai`}
               </Button>
             )}
@@ -138,14 +137,13 @@ function ResultView({ view }: { view: AttemptView }) {
           <Card className="p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm text-muted">Điểm JLPT ước tính</p>
-                <p className="mt-1 text-2xl font-semibold">
+                <p className="text-sm font-medium text-muted">Điểm JLPT ước tính</p>
+                <p className="mt-1 text-3xl font-bold tabular-nums">
                   {estimate.score}
-                  <span className="text-base font-normal text-muted">/{estimate.maxScore}</span>
+                  <span className="text-base font-medium text-muted">/{estimate.maxScore}</span>
                 </p>
               </div>
-              <Badge tone={estimate.passed ? "success" : "danger"} className="text-sm">
-                {estimate.passed ? <Trophy className="size-4" /> : <XCircle className="size-4" />}
+              <Badge tone={estimate.passed ? "success" : "danger"} className="px-2.5 py-1 text-sm">
                 {estimate.passed ? "Có khả năng đỗ" : "Chưa đạt"}
               </Badge>
             </div>
@@ -158,13 +156,9 @@ function ResultView({ view }: { view: AttemptView }) {
                       <span className="jp">{c.nameJa}</span>
                       <span className="ml-2 text-xs text-muted">{c.correct}/{c.total} câu</span>
                     </span>
-                    <span className="flex items-center gap-1 tabular-nums">
-                      {c.passedMin ? (
-                        <CheckCircle2 className="size-4 text-success" aria-label="Vượt điểm liệt" />
-                      ) : (
-                        <XCircle className="size-4 text-danger" aria-label="Dưới điểm liệt" />
-                      )}
-                      {c.score}/{c.maxScore}
+                    <span className="font-semibold tabular-nums">
+                      {c.score}
+                      <span className="font-normal text-muted">/{c.maxScore}</span>
                     </span>
                   </div>
                   <ProgressBar
@@ -172,7 +166,9 @@ function ResultView({ view }: { view: AttemptView }) {
                     marker={(c.minScore / c.maxScore) * 100}
                     tone={c.passedMin ? "primary" : "danger"}
                   />
-                  <p className="mt-1 text-xs text-muted">Điểm liệt: {c.minScore}</p>
+                  <p className={cn("mt-1 text-xs", c.passedMin ? "text-muted" : "text-danger")}>
+                    Điểm liệt {c.minScore} · {c.passedMin ? "đã vượt" : "chưa đạt"}
+                  </p>
                 </div>
               ))}
             </div>
@@ -181,11 +177,18 @@ function ResultView({ view }: { view: AttemptView }) {
         ) : (
           <Card className="p-6">
             <p className="font-semibold">Tiếp theo nên làm gì?</p>
-            <ul className="mt-3 space-y-2 text-sm text-muted">
-              <li>• Xem lại giải thích các câu sai bên dưới, lưu những câu muốn ôn.</li>
-              <li>• Bấm “Làm lại câu sai” để luyện lại ngay khi còn nhớ.</li>
-              <li>• Câu sai được ghi lại để bạn ôn tập trong mục Tiến độ.</li>
-            </ul>
+            <ol className="mt-3 space-y-2.5 text-sm text-muted">
+              {[
+                "Xem lại giải thích các câu sai bên dưới, lưu những câu muốn ôn.",
+                "Bấm “Làm lại câu sai” để luyện lại ngay khi còn nhớ.",
+                "Câu sai được ghi lại để bạn ôn tập trong mục Tiến độ.",
+              ].map((text, i) => (
+                <li key={text} className="flex gap-3">
+                  <span className="font-mono text-xs leading-5 font-medium text-accent">0{i + 1}</span>
+                  {text}
+                </li>
+              ))}
+            </ol>
             <ButtonLink href={levelHref} variant="secondary" className="mt-4">Luyện tiếp {view.level}</ButtonLink>
           </Card>
         )}
@@ -286,19 +289,19 @@ function ReviewItem({ entry, view, showPassage }: { entry: AttemptEntry; view: A
           <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-muted hover:text-foreground">
             Bài đọc ({entry.mondai.nameJa}) — bấm để xem
           </summary>
-          <PassageBox content={passage.content} title={passage.title} className="m-3 mt-0" />
+          <PassageBox content={passage.content} title={passage.title} className="exam-paper m-3 mt-0" />
         </details>
       )}
-      <Card className={cn("p-4 sm:p-5", status === "wrong" && "border-danger/40")}>
+      <Card className={cn("p-4 sm:p-6", status === "wrong" && "border-danger/40")}>
         <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
           <span className="font-semibold">Câu {entry.number}</span>
           <span className="jp text-muted">問題{entry.mondai.number} · {entry.mondai.nameJa}</span>
-          {status === "correct" && <Badge tone="success"><CheckCircle2 className="size-3.5" /> Đúng</Badge>}
-          {status === "wrong" && <Badge tone="danger"><XCircle className="size-3.5" /> Sai</Badge>}
+          {status === "correct" && <Badge tone="success">Đúng</Badge>}
+          {status === "wrong" && <Badge tone="danger">Sai</Badge>}
           {status === "blank" && <Badge tone="warning">Bỏ trống</Badge>}
-          {q.flagged && <Badge tone="warning"><Flag className="size-3.5" /> Đánh dấu</Badge>}
+          {q.flagged && <Badge tone="warning">Đánh dấu</Badge>}
         </div>
-        <div className="mb-4">
+        <div className="exam-paper mb-4">
           {blank !== undefined && passage ? (
             <p className="text-sm">
               Chỗ trống <JpText text={q.prompt} highlightBlank={blank} /> trong bài đọc
@@ -307,9 +310,11 @@ function ReviewItem({ entry, view, showPassage }: { entry: AttemptEntry; view: A
             <JpText text={q.prompt} className={cn("block", q.type === "USAGE" && "text-xl font-semibold")} />
           )}
         </div>
-        <OptionList options={q.options} selectedIndex={q.selectedIndex} answerIndex={q.answerIndex} compact />
+        <div className="exam-paper">
+          <OptionList options={q.options} selectedIndex={q.selectedIndex} answerIndex={q.answerIndex} compact />
+        </div>
         {q.explanation && (
-          <div className="mt-4 rounded-lg bg-subtle p-3 text-sm">
+          <div className="mt-4 rounded-lg bg-subtle p-3 text-sm sm:px-4">
             <p className="mb-1 text-xs font-semibold text-muted">Giải thích</p>
             <JpText text={q.explanation} className="block" />
           </div>

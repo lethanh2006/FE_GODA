@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Headphones, Pause, Play, RotateCcw } from "lucide-react";
+import { Pause, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 
@@ -179,11 +179,10 @@ export function ListeningPlayer({
   return (
     <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
       <div className="flex flex-wrap items-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-full bg-primary-soft text-primary">
-          <Headphones className="size-5" />
-        </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium">Bài nghe</p>
+          <p className="text-sm font-semibold">
+            <span className="jp">聴解</span> <span className="font-normal text-muted">· Bài nghe</span>
+          </p>
           <p className="text-xs text-muted">
             {status === "loading" && "Đang tải giọng đọc…"}
             {status === "ready" && (playing ? `Đang phát ${index + 1}/${lines.length}` : `${lines.length} câu thoại`)}
@@ -242,7 +241,6 @@ export function ListeningPlayer({
 
       {status === "unsupported" && (
         <div className="mt-3 flex flex-wrap items-start gap-2 rounded-lg bg-warning-soft p-3 text-sm text-warning">
-          <AlertTriangle className="mt-0.5 size-4 shrink-0" />
           <span className="flex-1">
             Trình duyệt chưa có giọng đọc tiếng Nhật. Chrome / Edge / Safari trên Windows, macOS, Android, iOS đều có sẵn.
             {isLinuxDesktop() && (

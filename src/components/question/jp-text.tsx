@@ -72,8 +72,8 @@ export function PassageBox({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-xl border border-border bg-subtle/40 p-4 sm:p-5", className)}>
-      {title && <p className="jp mb-2 font-semibold">{title}</p>}
+    <div className={cn("rounded-xl border border-border bg-card p-4 sm:p-6", className)}>
+      {title && <p className="jp mb-3 border-b border-border pb-2 font-semibold">{title}</p>}
       <JpText text={content} highlightBlank={highlightBlank} className="block text-[15px] sm:text-base" />
     </div>
   );
