@@ -131,7 +131,7 @@ function ResultView({ view }: { view: AttemptView }) {
               <ButtonLink href={`/exams/${view.examSlug}`} variant="secondary">Thi lại đề này</ButtonLink>
             )}
           </div>
-          {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-3 text-sm text-danger">{error}</p>}
         </Card>
 
         {estimate ? (
@@ -160,9 +160,9 @@ function ResultView({ view }: { view: AttemptView }) {
                     </span>
                     <span className="flex items-center gap-1 tabular-nums">
                       {c.passedMin ? (
-                        <CheckCircle2 className="size-4 text-emerald-600" aria-label="Vượt điểm liệt" />
+                        <CheckCircle2 className="size-4 text-success" aria-label="Vượt điểm liệt" />
                       ) : (
-                        <XCircle className="size-4 text-red-600" aria-label="Dưới điểm liệt" />
+                        <XCircle className="size-4 text-danger" aria-label="Dưới điểm liệt" />
                       )}
                       {c.score}/{c.maxScore}
                     </span>
@@ -289,7 +289,7 @@ function ReviewItem({ entry, view, showPassage }: { entry: AttemptEntry; view: A
           <PassageBox content={passage.content} title={passage.title} className="m-3 mt-0" />
         </details>
       )}
-      <Card className={cn("p-4 sm:p-5", status === "wrong" && "border-red-300 dark:border-red-900")}>
+      <Card className={cn("p-4 sm:p-5", status === "wrong" && "border-danger/40")}>
         <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
           <span className="font-semibold">Câu {entry.number}</span>
           <span className="jp text-muted">問題{entry.mondai.number} · {entry.mondai.nameJa}</span>

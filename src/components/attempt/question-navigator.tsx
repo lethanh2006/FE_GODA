@@ -56,8 +56,8 @@ export function QuestionNavigator({
                         aria-current={entry.index === current}
                         className={cn(
                           "relative h-8 rounded-md border text-xs font-medium tabular-nums transition-colors",
-                          state.correct === true && "border-emerald-500 bg-emerald-500 text-white",
-                          state.correct === false && "border-red-500 bg-red-500 text-white",
+                          state.correct === true && "border-success bg-success text-on-status",
+                          state.correct === false && "border-danger bg-danger text-on-status",
                           state.correct === undefined && state.answered && "border-primary bg-primary text-primary-foreground",
                           state.correct === undefined && !state.answered && "border-border bg-card hover:bg-subtle",
                           entry.index === current && "ring-2 ring-foreground ring-offset-1 ring-offset-card",
@@ -65,7 +65,7 @@ export function QuestionNavigator({
                       >
                         {entry.number}
                         {state.flagged && (
-                          <span className="absolute -top-1 -right-1 size-2.5 rounded-full border border-card bg-amber-500" />
+                          <span className="absolute -top-1 -right-1 size-2.5 rounded-full border border-card bg-warning" />
                         )}
                       </button>
                     );
@@ -79,7 +79,7 @@ export function QuestionNavigator({
       <div className="flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 text-xs text-muted">
         <span className="flex items-center gap-1"><span className="size-3 rounded bg-primary" /> Đã làm</span>
         <span className="flex items-center gap-1"><span className="size-3 rounded border border-border" /> Chưa làm</span>
-        <span className="flex items-center gap-1"><span className="size-2.5 rounded-full bg-amber-500" /> Đánh dấu</span>
+        <span className="flex items-center gap-1"><span className="size-2.5 rounded-full bg-warning" /> Đánh dấu</span>
       </div>
     </div>
   );

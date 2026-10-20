@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-4 py-12 sm:py-16">
       <section className="flex flex-col gap-6">
-        <p className="jp text-sm font-medium text-red-600">日本語能力試験 · JLPT</p>
+        <p className="jp text-sm font-medium text-danger">日本語能力試験 · JLPT</p>
         <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl">
           Luyện đề JLPT N5–N1, chấm điểm và giải thích ngay.
         </h1>

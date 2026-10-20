@@ -10,11 +10,8 @@ interface LevelMeta {
   summary: string;
   kanji: string;
   vocab: string;
-  /** Lớp Tailwind viết đầy đủ để JIT nhận diện được. */
-  badge: string;
-  accent: string;
-  ring: string;
-  soft: string;
+  /** Độ khó 1–5 (N5 = 1). */
+  difficulty: number;
 }
 
 export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
@@ -23,50 +20,35 @@ export const LEVEL_META: Record<JlptLevel, LevelMeta> = {
     summary: "Đọc hiểu câu cơ bản viết bằng Hiragana, Katakana và Kanji đơn giản; nghe hội thoại chậm về chủ đề quen thuộc.",
     kanji: "~100 Kanji",
     vocab: "~800 từ",
-    badge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
-    accent: "text-emerald-600 dark:text-emerald-400",
-    ring: "hover:border-emerald-400 dark:hover:border-emerald-700",
-    soft: "bg-emerald-50 dark:bg-emerald-950/40",
+    difficulty: 1,
   },
   N4: {
     name: "Sơ cấp 2",
     summary: "Hiểu tiếng Nhật cơ bản trong sinh hoạt hằng ngày; đọc đoạn văn ngắn với từ vựng và Kanji quen thuộc.",
     kanji: "~300 Kanji",
     vocab: "~1.500 từ",
-    badge: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
-    accent: "text-sky-600 dark:text-sky-400",
-    ring: "hover:border-sky-400 dark:hover:border-sky-700",
-    soft: "bg-sky-50 dark:bg-sky-950/40",
+    difficulty: 2,
   },
   N3: {
     name: "Trung cấp",
     summary: "Hiểu tiếng Nhật dùng trong tình huống hằng ngày ở mức nhất định; đọc tiêu đề báo, văn bản có độ khó vừa.",
     kanji: "~650 Kanji",
     vocab: "~3.700 từ",
-    badge: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300",
-    accent: "text-indigo-600 dark:text-indigo-400",
-    ring: "hover:border-indigo-400 dark:hover:border-indigo-700",
-    soft: "bg-indigo-50 dark:bg-indigo-950/40",
+    difficulty: 3,
   },
   N2: {
     name: "Trung cao cấp",
     summary: "Hiểu báo chí, bài bình luận, văn bản công việc thông dụng và hội thoại ở tốc độ gần tự nhiên.",
     kanji: "~1.000 Kanji",
     vocab: "~6.000 từ",
-    badge: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
-    accent: "text-violet-600 dark:text-violet-400",
-    ring: "hover:border-violet-400 dark:hover:border-violet-700",
-    soft: "bg-violet-50 dark:bg-violet-950/40",
+    difficulty: 4,
   },
   N1: {
     name: "Cao cấp",
     summary: "Đọc văn bản phức tạp, trừu tượng về nhiều chủ đề; nắm bắt lập luận và ý đồ của người viết.",
     kanji: "~2.000 Kanji",
     vocab: "~10.000 từ",
-    badge: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
-    accent: "text-rose-600 dark:text-rose-400",
-    ring: "hover:border-rose-400 dark:hover:border-rose-700",
-    soft: "bg-rose-50 dark:bg-rose-950/40",
+    difficulty: 5,
   },
 };
 

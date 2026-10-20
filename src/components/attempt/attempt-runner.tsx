@@ -345,7 +345,7 @@ function Runner({ view }: { view: AttemptView }) {
           <div
             className={cn(
               "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-mono text-sm tabular-nums",
-              lowTime ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300" : "bg-subtle",
+              lowTime ? "bg-danger-soft text-danger" : "bg-subtle",
             )}
             title={remaining !== null ? "Thời gian còn lại" : "Thời gian đã làm"}
           >
@@ -417,7 +417,7 @@ function Runner({ view }: { view: AttemptView }) {
                     className={cn(
                       "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs",
                       answer?.flagged
-                        ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                        ? "bg-warning-soft text-warning"
                         : "text-muted hover:bg-subtle",
                     )}
                     title="Đánh dấu để xem lại (phím F)"
@@ -457,7 +457,7 @@ function Runner({ view }: { view: AttemptView }) {
                     Các lựa chọn được đọc trong bài nghe — hiện chữ để luyện dễ hơn
                   </button>
                 )}
-                {revealError && <p className="mt-3 text-sm text-red-600">{revealError}</p>}
+                {revealError && <p className="mt-3 text-sm text-danger">{revealError}</p>}
               </div>
 
               {reveal && (
@@ -465,15 +465,15 @@ function Runner({ view }: { view: AttemptView }) {
                   className={cn(
                     "rounded-xl border p-4",
                     reveal.isCorrect
-                      ? "border-emerald-300 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/40"
-                      : "border-red-300 bg-red-50 dark:border-red-900 dark:bg-red-950/40",
+                      ? "border-success/40 bg-success-soft"
+                      : "border-danger/40 bg-danger-soft",
                   )}
                 >
                   <p className="flex items-center gap-2 font-semibold">
                     {reveal.isCorrect ? (
-                      <><CheckCircle2 className="size-5 text-emerald-600" /> Chính xác!</>
+                      <><CheckCircle2 className="size-5 text-success" /> Chính xác!</>
                     ) : (
-                      <><XCircle className="size-5 text-red-600" /> Chưa đúng — đáp án là {reveal.answerIndex + 1}</>
+                      <><XCircle className="size-5 text-danger" /> Chưa đúng — đáp án là {reveal.answerIndex + 1}</>
                     )}
                   </p>
                   {reveal.explanation && (
@@ -558,13 +558,13 @@ function Runner({ view }: { view: AttemptView }) {
             <Stat label="Đánh dấu" value={flaggedCount} />
           </div>
           {unanswered > 0 && (
-            <p className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+            <p className="flex items-start gap-2 rounded-lg bg-warning-soft p-3 text-warning">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" />
               Bạn còn {unanswered} câu chưa trả lời. Các câu bỏ trống sẽ tính là sai.
             </p>
           )}
           {remaining !== null && <p className="text-muted">Thời gian còn lại: {formatClock(remaining)}</p>}
-          {submitError && <p className="text-red-600">{submitError}</p>}
+          {submitError && <p className="text-danger">{submitError}</p>}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setSubmitOpen(false)} disabled={submitting}>
               Làm tiếp
@@ -582,12 +582,12 @@ function Runner({ view }: { view: AttemptView }) {
 function SaveIndicator({ state }: { state: "idle" | "saving" | "saved" | "error" }) {
   if (state === "idle") return null;
   const label = { saving: "Đang lưu…", saved: "Đã lưu", error: "Chưa lưu được — sẽ thử lại" }[state];
-  return <span className={cn("hidden text-xs sm:inline", state === "error" ? "text-red-600" : "text-muted")}>{label}</span>;
+  return <span className={cn("hidden text-xs sm:inline", state === "error" ? "text-danger" : "text-muted")}>{label}</span>;
 }
 
 function Stat({ label, value, tone }: { label: string; value: number; tone?: "warning" }) {
   return (
-    <div className={cn("rounded-lg bg-subtle p-3", tone === "warning" && "bg-amber-50 dark:bg-amber-950/50")}>
+    <div className={cn("rounded-lg bg-subtle p-3", tone === "warning" && "bg-warning-soft")}>
       <p className="text-xl font-bold tabular-nums">{value}</p>
       <p className="text-xs text-muted">{label}</p>
     </div>

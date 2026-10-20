@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "./theme-toggle";
 import { LEVELS } from "@/lib/jlpt";
 
 export function Header() {
@@ -16,7 +17,7 @@ export function Header() {
     <header className="sticky top-0 z-30 border-b border-border bg-card/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold tracking-tight whitespace-nowrap" onClick={() => setMobileOpen(false)}>
-          <span className="jp flex size-8 items-center justify-center rounded-lg bg-red-600 text-sm leading-none text-white">
+          <span className="jp flex size-8 items-center justify-center rounded-lg bg-accent text-sm leading-none text-white">
             合
           </span>
           <span>GODA JLPT</span>
@@ -42,6 +43,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <UserMenu />
           <button
             type="button"
@@ -155,7 +157,7 @@ function UserMenu() {
           ))}
           <button
             type="button"
-            className={cn("flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-subtle")}
+            className={cn("flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-subtle")}
             onClick={async () => {
               setOpen(false);
               await logout();

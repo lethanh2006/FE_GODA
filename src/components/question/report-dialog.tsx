@@ -77,7 +77,7 @@ export function ReportButton({ questionId, className }: { questionId: string; cl
               placeholder="Mô tả thêm (không bắt buộc)…"
               className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
             />
-            {state === "error" && <p className="text-sm text-red-600">Gửi không thành công, vui lòng thử lại.</p>}
+            {state === "error" && <p className="text-sm text-danger">Gửi không thành công, vui lòng thử lại.</p>}
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setOpen(false)}>Huỷ</Button>
               <Button onClick={submit} disabled={state === "sending"}>

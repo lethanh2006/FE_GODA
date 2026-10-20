@@ -24,11 +24,11 @@ export function LevelGrid({ overview }: { overview?: LevelOverview[] }) {
             href={`/${level.toLowerCase()}`}
             className={cn(
               "group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-colors",
-              meta.ring,
+              "hover:border-primary/50",
             )}
           >
             <div className="flex items-baseline justify-between">
-              <span className={cn("text-3xl font-bold", meta.accent)}>{level}</span>
+              <span className={"text-3xl font-bold"}>{level}</span>
               <ArrowRight className="size-4 text-muted transition-transform group-hover:translate-x-0.5" />
             </div>
             <div>

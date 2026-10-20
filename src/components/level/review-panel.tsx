@@ -44,7 +44,7 @@ export function ReviewPanel({ level }: { level: JlptLevel }) {
           <BookMarked className="size-4" /> {pending === "bookmarks" ? "Đang tạo…" : "Ôn câu đã lưu"}
         </Button>
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
     </div>
   );
 }

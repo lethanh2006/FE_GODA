@@ -241,7 +241,7 @@ export function ListeningPlayer({
       )}
 
       {status === "unsupported" && (
-        <div className="mt-3 flex flex-wrap items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+        <div className="mt-3 flex flex-wrap items-start gap-2 rounded-lg bg-warning-soft p-3 text-sm text-warning">
           <AlertTriangle className="mt-0.5 size-4 shrink-0" />
           <span className="flex-1">
             Trình duyệt chưa có giọng đọc tiếng Nhật. Chrome / Edge / Safari trên Windows, macOS, Android, iOS đều có sẵn.

@@ -1,31 +1,58 @@
 @import "tailwindcss";
 
+/* dark: theo data-theme trên <html> (người dùng chọn), không theo media query. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Bảng màu: nền giấy ấm, mực đen, màu chính 紺 (navy), điểm nhấn 朱 (đỏ son) chỉ dùng cho dấu triện / nhấn mạnh.
+ * Màu trạng thái (đúng / sai / cảnh báo) có cặp *-soft cho nền nhạt.
+ */
 :root {
-  --background: #f6f6f4;
-  --foreground: #1a1a1e;
+  color-scheme: light;
+  --background: #f6f5f1;
+  --foreground: #1b1b1f;
   --card: #ffffff;
-  --muted: #6b6b76;
-  --subtle: #efeff1;
-  --border: #e3e3e8;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-soft: #eef0ff;
+  --muted: #66666e;
+  --subtle: #efede8;
+  --border: #e2dfd8;
+  --border-strong: #cbc7be;
+  --primary: #233f8f;
+  --primary-hover: #1b3274;
+  --primary-soft: #e8edf8;
   --primary-foreground: #ffffff;
+  --accent: #c8432b;
+  --accent-soft: #fbece8;
+  --success: #17803d;
+  --success-soft: #e6f4ea;
+  --danger: #c0352b;
+  --danger-soft: #fbeae8;
+  --warning: #a55d06;
+  --warning-soft: #fcf1df;
+  --on-status: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0b0e;
-    --foreground: #ececf1;
-    --card: #15151a;
-    --muted: #a0a0ad;
-    --subtle: #22222a;
-    --border: #2a2a33;
-    --primary: #6d6af5;
-    --primary-hover: #8583f8;
-    --primary-soft: #1d1c3a;
-    --primary-foreground: #ffffff;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #111215;
+  --foreground: #e9e9ec;
+  --card: #18191d;
+  --muted: #9d9da6;
+  --subtle: #212228;
+  --border: #2c2d34;
+  --border-strong: #3d3f48;
+  --primary: #8aa4f2;
+  --primary-hover: #a3b8f6;
+  --primary-soft: #1d2540;
+  --primary-foreground: #0e1424;
+  --accent: #ec6d52;
+  --accent-soft: #33191a;
+  --success: #5cc887;
+  --success-soft: #142a1d;
+  --danger: #f07a70;
+  --danger-soft: #331a19;
+  --warning: #e8ad5a;
+  --warning-soft: #30230f;
+  --on-status: #111215;
 }
 
 @theme inline {
@@ -35,13 +62,24 @@
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-soft: var(--primary-soft);
   --color-primary-foreground: var(--primary-foreground);
-  --font-sans: var(--font-geist-sans), var(--font-noto-sans-jp), system-ui, sans-serif;
-  --font-jp: var(--font-noto-sans-jp), var(--font-geist-sans), sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-on-status: var(--on-status);
+  --font-sans: var(--font-be-vietnam), var(--font-noto-sans-jp), system-ui, sans-serif;
+  --font-jp: var(--font-noto-sans-jp), var(--font-be-vietnam), sans-serif;
+  --font-serif-jp: var(--font-noto-serif-jp), var(--font-noto-sans-jp), serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 body {
@@ -56,6 +94,16 @@ body {
   font-feature-settings: "palt" 0;
 }
 
+/* Nội dung đề (câu hỏi, đáp án, bài đọc) in kiểu Mincho như đề thi giấy. */
+.exam-paper .jp {
+  font-family: var(--font-serif-jp);
+}
+
 dialog::backdrop {
-  background: rgb(0 0 0 / 0.45);
+  background: rgb(0 0 0 / 0.5);
+}
+
+::selection {
+  background: var(--primary-soft);
+  color: var(--foreground);
 }

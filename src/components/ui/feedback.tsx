@@ -40,7 +40,7 @@ export function EmptyState({
 
 export function ErrorNotice({ message, action }: { message: string; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
       <span>{message}</span>
       {action}
     </div>
@@ -62,15 +62,15 @@ export function ProgressBar({
 }) {
   const fills = {
     primary: "bg-primary",
-    success: "bg-emerald-500",
-    danger: "bg-red-500",
-    warning: "bg-amber-500",
+    success: "bg-success",
+    danger: "bg-danger",
+    warning: "bg-warning",
   };
   const tracks = {
     primary: "bg-primary-soft",
-    success: "bg-emerald-100 dark:bg-emerald-950",
-    danger: "bg-red-100 dark:bg-red-950",
-    warning: "bg-amber-100 dark:bg-amber-950",
+    success: "bg-success-soft",
+    danger: "bg-danger-soft",
+    warning: "bg-warning-soft",
   };
   const width = Math.max(0, Math.min(100, value));
   return (

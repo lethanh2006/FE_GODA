@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { LevelContent } from "@/components/level/level-content";
 import { ReviewPanel } from "@/components/level/review-panel";
 import { Skeleton } from "@/components/ui/feedback";
-import { cn } from "@/lib/cn";
 import { isLevel, LEVEL_META, LEVELS } from "@/lib/jlpt";
 import type { JlptLevel } from "@/lib/types";
 
@@ -30,11 +29,11 @@ export default async function LevelPage({ params }: PageProps<"/[level]">) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-10 px-4 py-10">
-      <header className={cn("grid gap-6 rounded-2xl p-6 sm:p-8 lg:grid-cols-[1fr_20rem]", meta.soft)}>
+      <header className={"grid gap-6 rounded-2xl border border-border bg-card p-6 sm:p-8 lg:grid-cols-[1fr_20rem]"}>
         <div className="space-y-3">
           <p className="jp text-sm text-muted">日本語能力試験</p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            JLPT <span className={meta.accent}>{level}</span> · {meta.name}
+            JLPT <span className="text-primary">{level}</span> · {meta.name}
           </h1>
           <p className="max-w-2xl text-muted">{meta.summary}</p>
           <p className="text-sm text-muted">

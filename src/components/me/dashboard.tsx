@@ -123,7 +123,7 @@ export function Dashboard() {
                 };
               })}
             />
-            {startError && <p className="mt-3 text-sm text-red-600">{startError}</p>}
+            {startError && <p className="mt-3 text-sm text-danger">{startError}</p>}
           </div>
         </Card>
       </div>
@@ -218,7 +218,7 @@ function TargetBanner() {
         </Button>
         <ButtonLink href={`/${level.toLowerCase()}`} size="sm" variant="ghost">Trang {level}</ButtonLink>
       </div>
-      {error && <p className="basis-full text-sm text-red-600">{error}</p>}
+      {error && <p className="basis-full text-sm text-danger">{error}</p>}
     </Card>
   );
 }

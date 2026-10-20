@@ -86,7 +86,7 @@ export function AdminReports() {
             <code className="rounded bg-subtle px-1.5 py-0.5 text-xs">{report.question.id}</code>
             <span className="ml-auto text-xs text-muted">{formatDateTime(report.createdAt)}</span>
           </div>
-          <div className="rounded-lg bg-amber-50 p-3 text-sm dark:bg-amber-950/40">
+          <div className="rounded-lg bg-warning-soft p-3 text-sm">
             <p className="font-medium">{REASON_LABEL[report.reason] ?? report.reason}</p>
             {report.message && <p className="mt-1 whitespace-pre-line">{report.message}</p>}
             <p className="mt-1 text-xs text-muted">

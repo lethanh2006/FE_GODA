@@ -81,7 +81,7 @@ export function ExamStartPanel({ exam }: { exam: ExamDetail }) {
       >
         {pending ? "Đang chuẩn bị đề…" : practice ? `Bắt đầu luyện ${count} câu` : `Bắt đầu thi · ${minutes} phút`}
       </Button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
       <p className="text-xs text-muted">Bài làm được tự động lưu — bạn có thể thoát và làm tiếp bất cứ lúc nào.</p>
     </div>
   );

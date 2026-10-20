@@ -46,8 +46,8 @@ export function OptionList({
               compact ? "py-2" : "py-3",
               !graded && selected && "border-primary bg-primary-soft",
               !graded && !selected && "border-border bg-card hover:border-primary/50 hover:bg-subtle",
-              correct && "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40",
-              wrong && "border-red-500 bg-red-50 dark:bg-red-950/40",
+              correct && "border-success bg-success-soft",
+              wrong && "border-danger bg-danger-soft",
               graded && !correct && !wrong && "border-border bg-card opacity-80",
               "disabled:cursor-default",
             )}
@@ -57,8 +57,8 @@ export function OptionList({
                 "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border text-sm font-semibold",
                 !graded && selected && "border-primary bg-primary text-primary-foreground",
                 !graded && !selected && "border-border text-muted group-hover:border-primary/50",
-                correct && "border-emerald-500 bg-emerald-500 text-white",
-                wrong && "border-red-500 bg-red-500 text-white",
+                correct && "border-success bg-success text-on-status",
+                wrong && "border-danger bg-danger text-on-status",
                 graded && !correct && !wrong && "border-border text-muted",
               )}
             >

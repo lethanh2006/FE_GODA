@@ -45,7 +45,7 @@ export function BookmarkButton({
       title={saved ? "Bỏ lưu câu hỏi" : "Lưu câu hỏi để ôn lại"}
       className={cn(
         "inline-flex items-center gap-1 text-xs",
-        saved ? "text-amber-600 dark:text-amber-400" : "text-muted hover:text-foreground",
+        saved ? "text-warning" : "text-muted hover:text-foreground",
         className,
       )}
     >

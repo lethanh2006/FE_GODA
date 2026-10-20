@@ -82,7 +82,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           placeholder={mode === "register" ? "Tối thiểu 8 ký tự" : ""}
         />
       </label>
-      {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">{error}</p>}
+      {error && <p className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{error}</p>}
       <Button type="submit" size="lg" className="w-full" disabled={busy}>
         {busy ? "Đang xử lý…" : mode === "login" ? "Đăng nhập" : "Tạo tài khoản"}
       </Button>

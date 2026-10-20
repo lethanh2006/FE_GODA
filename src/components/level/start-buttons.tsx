@@ -13,7 +13,7 @@ export function RandomExamButton({ level }: { level: JlptLevel }) {
         <Shuffle className="size-4" />
         {pending ? "Đang tạo đề…" : "Tạo đề ngẫu nhiên"}
       </Button>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function QuickPracticeButton({
         <Zap className="size-3.5" />
         {pending ? "…" : `${count} câu`}
       </Button>
-      {error && <p className="basis-full text-xs text-red-600">{error}</p>}
+      {error && <p className="basis-full text-xs text-danger">{error}</p>}
     </>
   );
 }

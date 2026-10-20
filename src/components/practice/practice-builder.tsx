@@ -197,7 +197,7 @@ export function PracticeBuilder() {
             >
               {pending ? "Đang tạo bài…" : `Bắt đầu ${count} câu`}
             </Button>
-            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+            {error && <p className="mt-2 text-sm text-danger">{error}</p>}
           </div>
         </Card>
       </aside>
