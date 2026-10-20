@@ -58,7 +58,7 @@ export function PracticeBuilder() {
     <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
       <div className="space-y-6">
         <Card className="space-y-3 p-5">
-          <p className="text-sm font-medium">Cấp độ</p>
+          <p className="text-sm font-semibold">Cấp độ</p>
           <div className="grid grid-cols-5 gap-2">
             {LEVELS.map((l) => (
               <button
@@ -70,7 +70,7 @@ export function PracticeBuilder() {
                 }}
                 className={cn(
                   "h-11 rounded-lg border text-sm font-bold transition-colors",
-                  l === level ? "border-primary bg-primary-soft text-primary" : "border-border hover:bg-subtle",
+                  l === level ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-subtle",
                 )}
               >
                 {l}
@@ -81,7 +81,7 @@ export function PracticeBuilder() {
 
         <Card className="space-y-4 p-5">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-medium">Dạng bài</p>
+            <p className="text-sm font-semibold">Dạng bài</p>
             <button type="button" className="text-xs text-primary hover:underline" onClick={() => setTypes([])}>
               {types.length ? "Bỏ chọn (luyện tất cả)" : "Đang chọn: tất cả dạng"}
             </button>
@@ -94,7 +94,7 @@ export function PracticeBuilder() {
               if (!groupTypes.length) return null;
               return (
                 <div key={group} className="space-y-2">
-                  <p className="text-xs text-muted">
+                  <p className="text-xs font-medium text-muted">
                     <span className="jp">{SKILL_GROUPS[group].nameJa}</span> · {SKILL_GROUPS[group].nameVi}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -128,11 +128,11 @@ export function PracticeBuilder() {
       <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
         <Card className="space-y-5 p-5">
           <div className="space-y-2">
-            <p className="text-sm font-medium">Số câu</p>
+            <p className="text-sm font-semibold">Số câu</p>
             <Segmented value={count} onChange={setCount} options={COUNTS.map((c) => ({ value: c, label: c }))} />
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-medium">Chọn câu</p>
+            <p className="text-sm font-semibold">Chọn câu</p>
             <div className="flex flex-wrap gap-1.5">
               {FOCUS.map((f) => {
                 const locked = f.auth && !user;
