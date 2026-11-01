@@ -1,7 +1,9 @@
-/** Minh hoạ trang chủ: thẻ học và con dấu 合 (合格 — đỗ), vẽ bằng CSS để không cần ảnh. */
+import { Mascot } from "@/components/mascot/mascot";
+
+/** Minh hoạ trang chủ: thẻ học vẽ bằng CSS và linh vật gấu trúc. */
 export function HeroArt() {
   return (
-    <div className="relative mx-auto h-[23rem] w-full max-w-md" aria-hidden>
+    <div className="relative mx-auto h-[27rem] w-full max-w-md" aria-hidden>
       <div className="absolute top-2 right-2 size-72 rounded-full bg-primary/10" />
       <div className="absolute top-16 right-14 size-40 rounded-full border-[14px] border-primary/10" />
 
@@ -27,8 +29,8 @@ export function HeroArt() {
         </div>
       </div>
 
-      <div className="absolute bottom-4 left-10 flex size-20 -rotate-12 items-center justify-center rounded-2xl border-4 border-primary font-serif-jp text-4xl font-semibold text-primary">
-        合
+      <div className="absolute bottom-0 left-2 w-36 drop-shadow-[0_10px_12px_rgb(0_0_0/0.22)] sm:w-44">
+        <Mascot animation="home" />
       </div>
     </div>
   );
