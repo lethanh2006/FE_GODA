@@ -37,7 +37,7 @@ export function LevelGrid({ overview }: { overview?: LevelOverview[] }) {
           <Link
             key={level}
             href={`/${level.toLowerCase()}`}
-            className="group flex flex-col rounded-xl border border-border bg-card p-5 transition-[border-color,box-shadow] hover:border-primary/40 hover:shadow-lg hover:shadow-black/[0.04]"
+            className="panel group flex flex-col p-5 transition-colors hover:border-primary/40"
           >
             <div className="flex items-start justify-between">
               <span className="text-[2rem] leading-none font-bold tracking-tight">{level}</span>
