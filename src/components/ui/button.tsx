@@ -6,20 +6,25 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "success";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-semibold transition-[background-color,border-color,color,opacity] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 select-none";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold transition-[background-color,border-color,color,opacity,transform,box-shadow] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 select-none";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary-hover",
-  secondary: "border border-border-strong/70 bg-card text-foreground shadow-xs hover:border-border-strong hover:bg-subtle",
+  // Nút "nổi khối": bóng đáy đặc, bấm thì lún xuống.
+  primary:
+    "border border-primary bg-primary text-primary-foreground shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_62%,#000)] hover:brightness-105 active:translate-y-[2px] active:shadow-[0_1px_0_0_color-mix(in_srgb,var(--primary)_62%,#000)]",
+  secondary:
+    "border border-border bg-card text-foreground shadow-[0_3px_0_0_var(--border)] hover:border-primary/30 hover:bg-subtle active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--border)]",
   ghost: "text-muted hover:bg-subtle hover:text-foreground",
-  danger: "bg-danger text-on-status hover:opacity-90",
-  success: "bg-success text-on-status hover:opacity-90",
+  danger:
+    "border border-danger bg-danger text-on-status shadow-[0_3px_0_0_color-mix(in_srgb,var(--danger)_62%,#000)] hover:brightness-105 active:translate-y-[2px] active:shadow-[0_1px_0_0_color-mix(in_srgb,var(--danger)_62%,#000)]",
+  success:
+    "border border-success bg-success text-on-status shadow-[0_3px_0_0_color-mix(in_srgb,var(--success)_62%,#000)] hover:brightness-105 active:translate-y-[2px] active:shadow-[0_1px_0_0_color-mix(in_srgb,var(--success)_62%,#000)]",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-[13px]",
-  md: "h-10 px-4 text-sm",
-  lg: "h-12 px-6 text-[15px]",
+  sm: "min-h-9 px-3.5 text-[13px]",
+  md: "min-h-11 px-4.5 text-sm",
+  lg: "min-h-12 px-6 text-[15px]",
 };
 
 export interface ButtonStyleProps {
