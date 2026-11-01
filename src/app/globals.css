@@ -199,25 +199,21 @@ body {
 /*
  * Khung trang: đã đăng nhập thì có thanh bên (máy tính) và thanh đáy (điện thoại).
  * Dùng :has thay vì đọc đường dẫn để nội dung trang không phụ thuộc phần chỉ có lúc chạy.
- * .focus-mode: phiên học, ẩn hết điều hướng. .exam-mode: làm bài, chỉ giữ thanh trên.
+ * Phiên học, làm bài, đăng nhập đổi khung bằng <FrameMode>.
  */
-.app-frame:has(.focus-mode) :is(.site-header, .sidebar, .bottom-nav, .site-footer),
-.app-frame:has(.exam-mode) :is(.sidebar, .bottom-nav, .site-footer) {
-  display: none;
-}
 .app-frame:has(.sidebar) .site-footer {
   display: none;
 }
 @media (min-width: 1024px) {
-  .app-frame:has(.sidebar):not(:has(.focus-mode, .exam-mode)) .app-main {
+  .app-frame:has(.sidebar) .app-main {
     padding-left: 15rem;
   }
-  .app-frame:has(.sidebar):not(:has(.exam-mode)) .site-header {
+  .app-frame:has(.sidebar) .site-header {
     display: none;
   }
 }
 @media (max-width: 1023px) {
-  .app-frame:has(.bottom-nav):not(:has(.focus-mode, .exam-mode)) .app-main {
+  .app-frame:has(.bottom-nav) .app-main {
     padding-bottom: 4.75rem;
   }
 }

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
+import { FrameMode } from "@/components/layout/frame-mode";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState, ErrorNotice, PageLoading } from "@/components/ui/feedback";
@@ -29,6 +30,7 @@ export function ReviewHome() {
   if (running) {
     return (
       <div className="focus-mode flex flex-1 flex-col">
+        <FrameMode mode="focus" />
         <ReviewRun onExit={() => { setRunning(false); void mutate(); }} />
       </div>
     );
