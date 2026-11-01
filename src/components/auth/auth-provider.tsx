@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from "react";
 import useSWR, { SWRConfig, useSWRConfig } from "swr";
 import { api, fetcher } from "@/lib/api";
 import { clearGuestAttempts, getGuestAttempts } from "@/lib/guest";
@@ -85,8 +85,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+const noSubscribe = () => () => {};
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth phải nằm trong <AuthProvider>");
-  return context;
+  // Khối trong Suspense có thể hydrate sau khi đã có phiên đăng nhập, lúc đó vẫn phải khớp HTML từ server (chưa biết người dùng).
+  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);
+  return hydrated ? context : { ...context, user: null, isLoading: true };
 }
