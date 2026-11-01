@@ -5,6 +5,7 @@ import useSWR, { SWRConfig, useSWRConfig } from "swr";
 import { api, fetcher } from "@/lib/api";
 import { clearGuestAttempts, getGuestAttempts } from "@/lib/guest";
 import type { User } from "@/lib/types";
+import { clearPendingWords, getPendingWords } from "@/lib/vocab";
 
 interface AuthContextValue {
   user: User | null;
@@ -37,6 +38,12 @@ function AuthState({ children }: { children: React.ReactNode }) {
       if (guestIds.length) {
         await api("/attempts/claim", { method: "POST", json: { attemptIds: guestIds } }).catch(() => undefined);
         clearGuestAttempts();
+      }
+      const pendingWords = getPendingWords();
+      if (pendingWords.length) {
+        await api("/study/words", { method: "POST", json: { wordIds: pendingWords, learned: true } })
+          .then(clearPendingWords)
+          .catch(() => undefined);
       }
       // Làm mới mọi dữ liệu phụ thuộc người dùng (tiến độ đề, thống kê…).
       await globalMutate((key) => key !== "/auth/session", undefined, { revalidate: true });
