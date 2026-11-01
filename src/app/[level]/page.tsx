@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { BookOpen } from "lucide-react";
 import { DifficultyMeter } from "@/components/home/level-cards";
+import { ButtonLink } from "@/components/ui/button";
 import { LevelContent } from "@/components/level/level-content";
 import { ReviewPanel } from "@/components/level/review-panel";
 import { Skeleton } from "@/components/ui/feedback";
@@ -23,7 +25,17 @@ export async function generateMetadata({ params }: PageProps<"/[level]">): Promi
   };
 }
 
-export default async function LevelPage({ params }: PageProps<"/[level]">) {
+export default function LevelPage({ params }: PageProps<"/[level]">) {
+  return (
+    <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pt-8 pb-8 sm:px-8">
+      <Suspense fallback={<LevelSkeleton />}>
+        <LevelBody params={params} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function LevelBody({ params }: { params: PageProps<"/[level]">["params"] }) {
   const { level: slug } = await params;
   if (!isLevel(slug) || slug !== slug.toLowerCase()) notFound();
   const level = slug.toUpperCase() as JlptLevel;
@@ -35,15 +47,27 @@ export default async function LevelPage({ params }: PageProps<"/[level]">) {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-14 px-4 pt-8 pb-8">
+    <>
       <div className="space-y-6">
         <nav className="text-sm text-muted" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-foreground">Trang chủ</Link>
+          <Link href="/luyen-thi" className="hover:text-foreground">Luyện thi</Link>
           <span className="mx-2">/</span>
           <span className="text-foreground">JLPT {level}</span>
         </nav>
-        <header className="grid items-start gap-8 lg:grid-cols-[1fr_20rem]">
-          <div className="space-y-4">
+        <nav className="flex flex-wrap gap-2" aria-label="Chọn cấp độ">
+          {LEVELS.map((item) => (
+            <Link
+              key={item}
+              href={`/${item.toLowerCase()}`}
+              aria-current={item === level ? "page" : undefined}
+              className={`chip ${item === level ? "chip-on" : ""}`}
+            >
+              {item}
+            </Link>
+          ))}
+        </nav>
+        <header className="grid items-stretch gap-5 lg:grid-cols-[1fr_20rem]">
+          <div className="panel hero space-y-4 p-6 sm:p-8">
             <div className="flex items-center gap-3">
               <p className="jp text-sm text-muted">日本語能力試験</p>
               <DifficultyMeter level={level} />
@@ -60,6 +84,9 @@ export default async function LevelPage({ params }: PageProps<"/[level]">) {
                 </div>
               ))}
             </dl>
+            <ButtonLink href={`/hoc-tu/${level.toLowerCase()}`} variant="secondary" size="sm">
+              <BookOpen className="size-4" aria-hidden /> Học từ vựng {level}
+            </ButtonLink>
           </div>
           <ReviewPanel level={level} />
         </header>
@@ -68,7 +95,7 @@ export default async function LevelPage({ params }: PageProps<"/[level]">) {
       <Suspense fallback={<LevelSkeleton />}>
         <LevelContent level={level} />
       </Suspense>
-    </main>
+    </>
   );
 }
 

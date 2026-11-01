@@ -39,7 +39,7 @@ export async function LevelContent({ level }: { level: JlptLevel }) {
             <ExamRow key={exam.slug} exam={exam} level={level} />
           ))}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 p-5 sm:px-6">
-            <div className="min-w-0 flex-1">
+            <div className="min-w-48 flex-1">
               <p className="font-semibold">Đề ngẫu nhiên</p>
               <p className="mt-1 text-sm text-muted">
                 Ghép đề mới từ ngân hàng {formatNumber(overview?.totalQuestions ?? 0)} câu theo đúng cấu trúc {level}
@@ -94,7 +94,7 @@ function ExamRow({ exam, level }: { exam: ExamSummary; level: JlptLevel }) {
   const progress = exam.progress;
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-4 p-5 sm:px-6">
-      <div className="min-w-0 flex-1 space-y-1">
+      <div className="min-w-48 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <Link href={`/exams/${exam.slug}`} className="font-semibold hover:text-primary">
             {shortTitle(exam.title, level)}
