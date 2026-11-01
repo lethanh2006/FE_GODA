@@ -10,12 +10,12 @@ const GROUPS = [
     ],
   },
   {
-    title: "Tài khoản",
+    title: "Học từ & tra cứu",
     links: [
-      { href: "/dashboard", label: "Tiến độ học tập" },
-      { href: "/history", label: "Lịch sử làm bài" },
-      { href: "/bookmarks", label: "Câu hỏi đã lưu" },
-      { href: "/settings", label: "Cài đặt" },
+      { href: "/hoc-tu", label: "Học từ vựng N5–N1" },
+      { href: "/on-tap", label: "Ôn tập ngắt quãng" },
+      { href: "/tu-dien", label: "Từ điển Nhật–Việt" },
+      { href: "/tu-dien/kanji", label: "Tra chữ Hán" },
     ],
   },
   {
@@ -26,15 +26,15 @@ const GROUPS = [
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-border">
+    <footer className="site-footer mt-20 border-t border-border bg-card">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="space-y-3">
           <p className="flex items-center gap-2.5 font-bold">
-            <span className="flex size-7 items-center justify-center rounded-md bg-accent font-serif-jp text-sm text-white">合</span>
+            <span className="flex size-7 items-center justify-center rounded-lg bg-accent font-serif-jp text-sm text-white dark:text-[#26110d]">合</span>
             GODA <span className="-ml-1.5 font-medium text-muted">JLPT</span>
           </p>
           <p className="max-w-xs text-sm text-muted">
-            Luyện đề thi năng lực tiếng Nhật N5–N1 theo đúng cấu trúc đề thật, có giải thích tiếng Việt.
+            Luyện đề JLPT N5–N1 theo cấu trúc đề thật, học từ vựng và tra từ Nhật–Việt có âm Hán Việt.
           </p>
         </div>
         {GROUPS.map((group) => (

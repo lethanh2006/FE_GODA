@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, Geist_Mono, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
+import { Suspense } from "react";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { Sidebar } from "@/components/layout/sidebar";
 import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
 
@@ -33,17 +36,17 @@ const notoSerifJp = Noto_Serif_JP({
 
 export const metadata: Metadata = {
   title: {
-    default: "GODA JLPT — Luyện đề JLPT N5–N1",
+    default: "GODA JLPT — Luyện thi, học từ và tra từ tiếng Nhật",
     template: "%s | GODA JLPT",
   },
   description:
-    "Luyện đề thi năng lực tiếng Nhật JLPT N5–N1: đề thi thử theo cấu trúc thật, luyện theo dạng bài, chấm điểm và giải thích chi tiết.",
+    "Luyện đề JLPT N5–N1 theo cấu trúc thật, học từ vựng bằng thẻ ghi nhớ và ôn tập ngắt quãng, tra từ Nhật–Việt có âm Hán Việt.",
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f5f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#111215" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f8fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#121720" },
   ],
 };
 
@@ -60,9 +63,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <AuthProvider>
-          <Header />
-          <div className="flex flex-1 flex-col">{children}</div>
-          <Footer />
+          <div className="app-frame flex min-h-full flex-1 flex-col">
+            {/* Thanh bên và thanh đáy đọc đường dẫn hiện tại, chỉ có lúc chạy nên nằm trong Suspense. */}
+            <Suspense>
+              <Sidebar />
+            </Suspense>
+            <div className="app-main flex min-h-full flex-1 flex-col">
+              <Header />
+              <div className="flex flex-1 flex-col">{children}</div>
+              <Footer />
+            </div>
+            <Suspense>
+              <BottomNav />
+            </Suspense>
+          </div>
         </AuthProvider>
       </body>
     </html>

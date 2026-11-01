@@ -7,9 +7,11 @@ export const metadata: Metadata = { title: "Làm bài" };
 
 export default function AttemptPage({ params }: PageProps<"/attempts/[id]">) {
   return (
-    <Suspense fallback={<PageLoading label="Đang tải đề…" />}>
-      <AttemptLoader params={params} />
-    </Suspense>
+    <div className="exam-mode flex flex-1 flex-col">
+      <Suspense fallback={<PageLoading label="Đang tải đề…" />}>
+        <AttemptLoader params={params} />
+      </Suspense>
+    </div>
   );
 }
 
