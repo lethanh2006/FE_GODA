@@ -23,7 +23,11 @@ export function VocabHome() {
             <span className="icon-tile bg-card"><Layers className="size-5" aria-hidden /></span>
             <div className="min-w-48 flex-1">
               <p className="text-2xl font-bold tracking-tight tabular-nums">
-                {stats.due > 0 ? `${formatNumber(stats.due)} từ cần ôn` : "Hôm nay đã ôn xong"}
+                {stats.due > 0
+                  ? `${formatNumber(stats.due)} từ cần ôn`
+                  : stats.total > 0
+                    ? "Chưa có từ đến hạn"
+                    : "Chưa có từ nào trong sổ"}
               </p>
               <p className="text-sm text-muted">
                 {stats.due > 0

@@ -19,7 +19,7 @@ const RATINGS = [
   { rating: 1, label: "Quên", key: "again", className: "border-danger/40 text-danger hover:bg-danger-soft" },
   { rating: 2, label: "Khó", key: "hard", className: "border-warning/40 text-warning hover:bg-warning-soft" },
   { rating: 3, label: "Nhớ", key: "good", className: "border-success/40 text-success hover:bg-success-soft" },
-  { rating: 4, label: "Dễ", key: "easy", className: "border-primary/40 text-primary hover:bg-primary-soft" },
+  { rating: 4, label: "Dễ", key: "easy", className: "border-border-strong text-foreground hover:bg-subtle" },
 ] as const;
 
 export function ReviewHome() {

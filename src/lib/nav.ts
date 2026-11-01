@@ -36,7 +36,7 @@ export const NAV_MORE: NavLink[] = [
 
 export const NAV_ACCOUNT: NavLink[] = [
   { href: "/settings", label: "Cài đặt", icon: Settings },
-  { href: "/about", label: "Giới thiệu & nguồn dữ liệu", icon: Info },
+  { href: "/about", label: "Giới thiệu", icon: Info },
 ];
 
 export const NAV_ADMIN: NavLink = { href: "/admin/reports", label: "Quản trị · Báo lỗi", icon: ShieldCheck };

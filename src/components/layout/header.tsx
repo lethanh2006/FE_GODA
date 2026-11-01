@@ -21,7 +21,7 @@ export function Logo({ tagline = true }: { tagline?: boolean }) {
         <span className="text-[17px] leading-tight font-bold tracking-tight">
           GODA<span className="text-accent">.</span>
         </span>
-        {tagline && <span className="text-xs text-muted">Luyện thi JLPT · Học từ · Tra từ</span>}
+        {tagline && <span className="hidden text-xs text-muted sm:block">Luyện thi JLPT · Học từ · Tra từ</span>}
       </span>
     </Link>
   );
@@ -30,7 +30,7 @@ export function Logo({ tagline = true }: { tagline?: boolean }) {
 export function Header() {
   return (
     <header className="site-header sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:gap-8 sm:px-8">
         <Logo />
         {/* Trạng thái "đang ở trang nào" chỉ có lúc chạy, nên phần dùng usePathname nằm trong Suspense. */}
         <Suspense fallback={<DesktopNav pathname={null} />}>

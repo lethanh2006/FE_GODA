@@ -9,7 +9,7 @@ import { useAuth } from "./auth-provider";
 
 /** Chỉ cho phép chuyển hướng nội bộ để tránh open redirect. */
 function safeNext(value: string | null) {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/hoc-tu";
 }
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
