@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LEVELS } from "@/lib/jlpt";
+import { LogoMark } from "./logo-mark";
 
 const GROUPS = [
   {
@@ -30,7 +31,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="space-y-3">
           <p className="flex items-center gap-2.5 font-bold">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-accent font-serif-jp text-sm text-white dark:text-[#26110d]">合</span>
+            <LogoMark className="size-7" />
             GODA <span className="-ml-1.5 font-medium text-muted">JLPT</span>
           </p>
           <p className="max-w-xs text-sm text-muted">

@@ -8,15 +8,13 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { isNavActive, NAV_ACCOUNT, NAV_ADMIN, NAV_GUEST, NAV_MORE } from "@/lib/nav";
+import { LogoMark } from "./logo-mark";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Logo({ tagline = true }: { tagline?: boolean }) {
   return (
     <Link href="/" className="flex shrink-0 items-center gap-2.5 whitespace-nowrap" aria-label="GODA JLPT — trang chủ">
-      {/* Dấu triện 合 (合格 — đỗ). */}
-      <span className="flex size-10 items-center justify-center rounded-xl bg-accent font-serif-jp text-[21px] leading-none text-white shadow-[0_3px_0_0_color-mix(in_srgb,var(--accent)_62%,#000)] dark:text-[#26110d]">
-        合
-      </span>
+      <LogoMark className="size-10 rounded-[10px] shadow-[0_3px_0_0_color-mix(in_srgb,var(--accent)_62%,#000)]" />
       <span className="flex flex-col">
         <span className="text-[17px] leading-tight font-bold tracking-tight">
           GODA<span className="text-accent">.</span>

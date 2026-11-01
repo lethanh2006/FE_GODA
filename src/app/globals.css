@@ -107,6 +107,21 @@ body {
   font-family: var(--font-serif-jp);
 }
 
+/* Logo: dấu triện chữ 合. */
+.logo-mark {
+  flex-shrink: 0;
+}
+.logo-mark-seal {
+  fill: var(--accent);
+}
+.logo-mark-ink {
+  fill: none;
+  stroke: var(--primary-foreground);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* Thẻ nổi nhẹ: khung của hầu hết nội dung. */
 .panel {
   border-radius: 1rem;
