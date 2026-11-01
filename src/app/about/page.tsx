@@ -3,12 +3,45 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = { title: "Giới thiệu & nguồn dữ liệu" };
 
+const DATA_SOURCES = [
+  {
+    name: "OpenJLPT",
+    href: "https://github.com/evanclan/OpenJLPT",
+    use: "Danh sách từ và chữ Hán theo cấp (dựa trên danh sách của Jonathan Waller).",
+    license: "CC BY-SA 4.0",
+  },
+  {
+    name: "JMdict · KANJIDIC2 (EDRDG)",
+    href: "https://www.edrdg.org/",
+    use: "Từ thông dụng, từ loại, nghĩa tiếng Anh, âm đọc và số nét chữ Hán.",
+    license: "CC BY-SA 4.0",
+  },
+  {
+    name: "Tatoeba",
+    href: "https://tatoeba.org",
+    use: "Câu ví dụ và bản dịch tiếng Anh.",
+    license: "CC BY 2.0 FR",
+  },
+  {
+    name: "Open Vietnamese Dictionary Project",
+    href: "https://sourceforge.net/projects/ovdp/",
+    use: "Nghĩa tiếng Việt lọc tự động.",
+    license: "GNU GPL v2",
+  },
+  {
+    name: "Unihan (Unicode)",
+    href: "https://www.unicode.org/charts/unihan.html",
+    use: "Âm Hán Việt, có bổ sung và hiệu đính bởi GODA.",
+    license: "© Unicode, Inc. · Unicode License V3",
+  },
+];
+
 export default function AboutPage() {
   return (
     <main className="mx-auto w-full max-w-3xl space-y-10 px-4 pt-10 pb-8">
       <PageHeader
         title="Giới thiệu & nguồn dữ liệu"
-        description="GODA JLPT là nền tảng luyện đề thi năng lực tiếng Nhật (JLPT) cho người Việt. Trang web không liên kết với Japan Foundation hay JEES — đơn vị tổ chức kỳ thi JLPT."
+        description="GODA JLPT giúp người Việt luyện đề JLPT, học từ vựng và tra từ tiếng Nhật. Trang web không liên kết với Japan Foundation hay JEES — đơn vị tổ chức kỳ thi JLPT."
       />
 
       <section className="space-y-3">
@@ -19,14 +52,14 @@ export default function AboutPage() {
           của đề thật, đến từ hai nguồn:
         </p>
         <ul className="space-y-3 text-sm leading-7">
-          <li className="rounded-xl border border-border bg-card p-4">
+          <li className="panel p-4">
             <p className="font-semibold">GODA biên soạn</p>
             <p className="text-muted">
               Các đề thi thử được biên soạn riêng cho GODA JLPT theo cấu trúc đề hiện hành, kèm giải thích tiếng Việt cho
               từng câu.
             </p>
           </li>
-          <li className="rounded-xl border border-border bg-card p-4">
+          <li className="panel p-4">
             <p className="font-semibold">OpenJLPT (ngân hàng mở rộng)</p>
             <p className="text-muted">
               Ngân hàng câu hỏi mã nguồn mở do AI tạo —{" "}
@@ -46,6 +79,37 @@ export default function AboutPage() {
           (EDRDG, CC BY-SA 4.0) qua bộ{" "}
           <a className="text-primary hover:underline" href="https://github.com/davidluzgouveia/kanji-data" target="_blank" rel="noreferrer">
             kanji-data
+          </a>
+          .
+        </p>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Về từ vựng và từ điển</h2>
+        <p className="text-sm leading-7 text-muted">
+          Nghĩa tiếng Việt của từ N5, N4 do GODA soạn tay. Từ N3 trở lên và từ ngoài danh sách JLPT dùng nghĩa{" "}
+          <strong className="text-foreground">lọc tự động</strong> từ từ điển mở, có thể chưa chính xác nên luôn hiện kèm
+          nghĩa tiếng Anh. Danh sách từ theo cấp là danh sách cộng đồng: JLPT không công bố danh sách từ chính thức.
+        </p>
+        <ul className="grid gap-2 text-sm leading-6 sm:grid-cols-2">
+          {DATA_SOURCES.map((source) => (
+            <li key={source.name} className="panel p-4">
+              <a className="font-semibold text-primary hover:underline" href={source.href} target="_blank" rel="noreferrer">
+                {source.name}
+              </a>
+              <p className="text-muted">{source.use}</p>
+              <p className="text-xs text-muted">{source.license}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs leading-6 text-muted">
+          Dữ liệu tổng hợp của GODA phát hành lại theo các giấy phép trên, xem{" "}
+          <a className="underline" href="https://github.com/lethanh2006/BE_GODA/tree/master/content" target="_blank" rel="noreferrer">
+            thư mục content
+          </a>
+          . Các tệp EDRDG được dùng theo{" "}
+          <a className="underline" href="https://www.edrdg.org/edrdg/licence.html" target="_blank" rel="noreferrer">
+            giấy phép của EDRDG
           </a>
           .
         </p>
