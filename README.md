@@ -67,3 +67,15 @@ src/
     auth/ layout/ level/ exam/ practice/ me/ home/ admin/
   lib/                   nav, vocab, api client, serverApi (chuyển tiếp cookie), types, hằng số JLPT, định dạng
 ```
+
+## Deploy lên Vercel
+
+Backend deploy trên Render (xem README của BE_GODA). `vercel.json` đặt function ở Singapore (`sin1`) cho gần backend.
+
+```bash
+vercel link                                    # lần đầu: tạo hoặc chọn project
+vercel env add API_INTERNAL_URL production     # https://<tên-service>.onrender.com/api
+vercel --prod
+```
+
+`API_INTERNAL_URL` được đọc lúc build (rewrite trong `next.config.ts`), nên sau khi đổi biến phải deploy lại.
