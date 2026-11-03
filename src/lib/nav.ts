@@ -2,6 +2,7 @@ import {
   Bookmark,
   BookOpen,
   ChartColumn,
+  GalleryVerticalEnd,
   History,
   Info,
   Layers,
@@ -19,10 +20,11 @@ export interface NavLink {
   icon: LucideIcon;
 }
 
-/** Ba việc chính của web, thêm ôn tập và sổ từ khi đã đăng nhập. */
+/** Ba việc chính của web, thêm ôn tập, bộ thẻ và sổ từ khi đã đăng nhập. */
 export const NAV_MAIN: NavLink[] = [
   { href: "/hoc-tu", label: "Học từ", icon: BookOpen },
   { href: "/on-tap", label: "Ôn tập", icon: Layers },
+  { href: "/bo-the", label: "Bộ thẻ", icon: GalleryVerticalEnd },
   { href: "/luyen-thi", label: "Luyện thi", icon: Target },
   { href: "/tu-dien", label: "Từ điển", icon: Search },
 ];
@@ -41,8 +43,8 @@ export const NAV_ACCOUNT: NavLink[] = [
 
 export const NAV_ADMIN: NavLink = { href: "/admin/reports", label: "Quản trị · Báo lỗi", icon: ShieldCheck };
 
-/** Thanh trên của khách: chưa có sổ ôn nên không hiện mục Ôn tập. */
-export const NAV_GUEST: NavLink[] = NAV_MAIN.filter((link) => link.href !== "/on-tap");
+/** Thanh trên của khách: chưa có sổ ôn, bộ thẻ nên không hiện hai mục này. */
+export const NAV_GUEST: NavLink[] = NAV_MAIN.filter((link) => link.href !== "/on-tap" && link.href !== "/bo-the");
 
 const LEVEL_PATH = /^\/n[1-5](\/|$)/;
 
