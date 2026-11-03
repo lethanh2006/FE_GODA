@@ -10,11 +10,43 @@ import { speakJapanese } from "@/components/vocab/speak-button";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { formatNumber } from "@/lib/format";
-import { formatInterval, type ReviewCard, type StudyQueue, type StudyStats } from "@/lib/vocab";
+import { formatInterval, type ReviewCard, type StudyStats } from "@/lib/vocab";
 import { Flashcard } from "./flashcard";
 import { FocusBar } from "./focus-bar";
 
 const BATCH = 20;
+
+export interface ReviewItem {
+  id: string;
+  preview: { again: string; hard: string; good: string; easy: string };
+}
+
+/** Nguồn thẻ của một phiên ôn: từ trong sổ ôn, hoặc thẻ của bộ thẻ riêng. */
+export interface ReviewSource<T extends ReviewItem> {
+  title: string;
+  queuePath: string;
+  reviewPath: string;
+  reviewBody: (card: T, rating: 1 | 2 | 3 | 4) => Record<string, unknown>;
+  /** Khoá SWR bắt đầu bằng tiền tố này được tải lại sau mỗi lần chấm. */
+  refreshPrefix: string;
+  /** Chữ được đọc khi lật thẻ; chuỗi rỗng thì không đọc. */
+  speakText: (card: T) => string;
+  renderCard: (card: T, flipped: boolean, onFlip: () => void) => React.ReactNode;
+  unit: string;
+  exitLabel: string;
+}
+
+const WORD_SOURCE: ReviewSource<ReviewCard> = {
+  title: "Ôn tập",
+  queuePath: `/study/queue?limit=${BATCH}`,
+  reviewPath: "/study/review",
+  reviewBody: (card, rating) => ({ wordId: card.id, rating }),
+  refreshPrefix: "/study/",
+  speakText: (card) => card.reading,
+  renderCard: (card, flipped, onFlip) => <Flashcard word={card} flipped={flipped} onFlip={onFlip} />,
+  unit: "từ",
+  exitLabel: "Về trang ôn tập",
+};
 
 const RATINGS = [
   { rating: 1, label: "Quên", key: "again", className: "border-danger/40 text-danger hover:bg-danger-soft" },
@@ -31,7 +63,7 @@ export function ReviewHome() {
     return (
       <div className="focus-mode flex flex-1 flex-col">
         <FrameMode mode="focus" />
-        <ReviewRun onExit={() => { setRunning(false); void mutate(); }} />
+        <ReviewRun source={WORD_SOURCE} onExit={() => { setRunning(false); void mutate(); }} />
       </div>
     );
   }
@@ -95,9 +127,9 @@ export function ReviewHome() {
   );
 }
 
-function ReviewRun({ onExit }: { onExit: () => void }) {
+export function ReviewRun<T extends ReviewItem>({ source, onExit }: { source: ReviewSource<T>; onExit: () => void }) {
   const { mutate } = useSWRConfig();
-  const [cards, setCards] = useState<ReviewCard[] | null>(null);
+  const [cards, setCards] = useState<T[] | null>(null);
   const [total, setTotal] = useState(0);
   const [done, setDone] = useState(0);
   const [loadError, setLoadError] = useState(false);
@@ -106,7 +138,7 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
 
   useEffect(() => {
     let cancelled = false;
-    api<StudyQueue>(`/study/queue?limit=${BATCH}`)
+    api<{ total: number; cards: T[] }>(source.queuePath)
       .then((queue) => {
         if (cancelled) return;
         setCards(queue.cards);
@@ -119,7 +151,7 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
     return () => {
       cancelled = true;
     };
-  }, [round]);
+  }, [round, source.queuePath]);
 
   const reload = () => {
     setLoadError(false);
@@ -127,7 +159,8 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
     setRound((r) => r + 1);
   };
 
-  const refresh = () => mutate((key) => typeof key === "string" && key.startsWith("/study/"), undefined, { revalidate: true });
+  const refresh = () =>
+    mutate((key) => typeof key === "string" && key.startsWith(source.refreshPrefix), undefined, { revalidate: true });
 
   if (loadError) {
     return (
@@ -146,10 +179,10 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 px-4 py-14 text-center">
         <span className="jp flex size-20 items-center justify-center rounded-2xl bg-primary-soft text-4xl font-bold text-primary">合</span>
         <h1 className="text-2xl font-bold tracking-tight">Xong lượt ôn!</h1>
-        <p className="text-muted">Bạn vừa ôn {total} từ.</p>
+        <p className="text-muted">Bạn vừa ôn {total} {source.unit}.</p>
         <div className="flex flex-wrap justify-center gap-3">
           <Button onClick={reload}>Ôn tiếp nếu còn</Button>
-          <Button variant="secondary" onClick={onExit}>Về trang ôn tập</Button>
+          <Button variant="secondary" onClick={onExit}>{source.exitLabel}</Button>
         </div>
       </div>
     );
@@ -158,6 +191,7 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
   return (
     <ReviewCardView
       key={`${cards[0].id}-${cards.length}`}
+      source={source}
       card={cards[0]}
       done={done}
       total={total}
@@ -177,18 +211,20 @@ function ReviewRun({ onExit }: { onExit: () => void }) {
 }
 
 const RETRY = Symbol("retry");
-type MaybeRetry = ReviewCard & { [RETRY]?: true };
-const isRetry = (card: MaybeRetry) => card[RETRY] === true;
-const markRetry = (card: ReviewCard): MaybeRetry => ({ ...card, [RETRY]: true });
+type MaybeRetry<T> = T & { [RETRY]?: true };
+const isRetry = <T,>(card: MaybeRetry<T>) => card[RETRY] === true;
+const markRetry = <T,>(card: T): MaybeRetry<T> => ({ ...card, [RETRY]: true });
 
-function ReviewCardView({
+function ReviewCardView<T extends ReviewItem>({
+  source,
   card,
   done,
   total,
   onExit,
   onRated,
 }: {
-  card: MaybeRetry;
+  source: ReviewSource<T>;
+  card: MaybeRetry<T>;
   done: number;
   total: number;
   onExit: () => void;
@@ -206,22 +242,23 @@ function ReviewCardView({
       setBusy(true);
       setFailed(false);
       try {
-        await api("/study/review", { method: "POST", json: { wordId: card.id, rating } });
+        await api(source.reviewPath, { method: "POST", json: source.reviewBody(card, rating) });
         onRated(rating === 1);
       } catch {
         setFailed(true);
         setBusy(false);
       }
     },
-    [busy, card.id, onRated, retry],
+    [busy, card, onRated, retry, source],
   );
 
+  const speech = source.speakText(card);
   const flip = useCallback(() => {
     setFlipped((value) => {
-      if (!value) speakJapanese(card.reading);
+      if (!value && speech) speakJapanese(speech);
       return !value;
     });
-  }, [card.reading]);
+  }, [speech]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -240,9 +277,9 @@ function ReviewCardView({
 
   return (
     <>
-      <FocusBar onExit={onExit} title="Ôn tập" done={done} total={total} />
+      <FocusBar onExit={onExit} title={source.title} done={done} total={total} />
       <div className="mx-auto w-full max-w-2xl space-y-5 px-4 py-8">
-        <Flashcard word={card} flipped={flipped} onFlip={flip} />
+        {source.renderCard(card, flipped, flip)}
         {flipped ? (
           retry ? (
             <Button className="w-full" onClick={() => onRated(false)}>Đã xem lại, tiếp tục</Button>
