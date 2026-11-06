@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { getPendingWords } from "@/lib/vocab";
 import { useAuth } from "./auth-provider";
+import { GoogleButton } from "./google-button";
 
 /** Chỉ cho phép chuyển hướng nội bộ để tránh open redirect. */
 function safeNext(value: string | null) {
@@ -33,7 +34,7 @@ const COPY = {
 };
 
 export function AuthForm() {
-  const { user, isLoading, login, register } = useAuth();
+  const { user, isLoading, login, loginWithGoogle, register } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -82,6 +83,17 @@ export function AuthForm() {
     }
   };
 
+  const onGoogleCredential = async (idToken: string) => {
+    submitting.current = true;
+    try {
+      await loginWithGoogle(idToken);
+      router.replace(next);
+      setPassword("");
+    } finally {
+      submitting.current = false;
+    }
+  };
+
   return (
     <div data-mode={mode}>
       <div key={mode} className="auth-heading">
@@ -100,7 +112,18 @@ export function AuthForm() {
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="mt-7 space-y-5" aria-busy={busy}>
+      {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+        <div className="mt-7">
+          <GoogleButton onCredential={onGoogleCredential} mode={mode === "register" ? "signup" : "signin"} />
+          <div className="my-6 flex items-center gap-3 text-xs font-semibold tracking-wider text-muted">
+            <span className="h-px flex-1 bg-border" />
+            HOẶC BẰNG EMAIL
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={onSubmit} className={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? "space-y-5" : "mt-7 space-y-5"} aria-busy={busy}>
         {mode === "register" && (
           <div>
             <label htmlFor="auth-name" className="mb-2 block text-xs font-semibold">

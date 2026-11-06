@@ -11,6 +11,7 @@ interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<User>;
+  loginWithGoogle: (idToken: string) => Promise<User>;
   register: (input: { email: string; password: string; displayName: string }) => Promise<User>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
@@ -58,6 +59,10 @@ function AuthState({ children }: { children: React.ReactNode }) {
       isLoading,
       login: async (email, password) => {
         const { user } = await api<{ user: User }>("/auth/login", { method: "POST", json: { email, password } });
+        return afterAuth(user);
+      },
+      loginWithGoogle: async (idToken) => {
+        const { user } = await api<{ user: User }>("/auth/google", { method: "POST", json: { idToken } });
         return afterAuth(user);
       },
       register: async (input) => {

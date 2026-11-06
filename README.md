@@ -15,6 +15,8 @@ pnpm dev                     # http://localhost:3000 (cần backend đang chạy
 Trình duyệt luôn gọi `/api/*` trên chính domain của web. Next.js proxy các request này tới `API_INTERNAL_URL`
 (xem `next.config.ts`), nên cookie đăng nhập là first-party và không cần cấu hình CORS.
 
+Để hiện nút đăng nhập Google trên `/login` và `/register`, đặt `NEXT_PUBLIC_GOOGLE_CLIENT_ID` trong `.env.local` (cùng giá trị với `GOOGLE_CLIENT_ID` ở backend), rồi khởi động lại frontend. Xem hướng dẫn tạo OAuth client và chạy migration trong README của backend.
+
 | Lệnh | Mô tả |
 | --- | --- |
 | `pnpm dev` | Chạy dev |
@@ -40,7 +42,7 @@ Trình duyệt luôn gọi `/api/*` trên chính domain của web. Next.js proxy
 | `/practice` | Tự tạo bài luyện: cấp độ, dạng bài, số câu, cách chọn câu, giới hạn giờ |
 | `/dashboard` | Tiến độ: độ chính xác, hoạt động 30 ngày, dạng bài yếu, bài đang làm dở |
 | `/history`, `/bookmarks` | Lịch sử làm bài, câu hỏi đã lưu |
-| `/settings` | Đổi tên hiển thị, chọn cấp độ mục tiêu |
+| `/settings` | Đổi tên hiển thị, chọn cấp độ mục tiêu, liên kết Google |
 | `/admin/reports` | (Quản trị viên) xử lý báo lỗi câu hỏi |
 | `/login`, `/register`, `/about` | Tài khoản, giới thiệu và nguồn dữ liệu |
 
@@ -75,6 +77,7 @@ Backend deploy trên Render (xem README của BE_GODA). `vercel.json` đặt fun
 ```bash
 vercel link                                    # lần đầu: tạo hoặc chọn project
 vercel env add API_INTERNAL_URL production     # https://<tên-service>.onrender.com/api
+vercel env add NEXT_PUBLIC_GOOGLE_CLIENT_ID production
 vercel --prod
 ```
 

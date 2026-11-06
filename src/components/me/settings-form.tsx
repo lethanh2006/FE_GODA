@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { ThemeSelect } from "@/components/layout/theme-toggle";
 import { Card } from "@/components/ui/card";
@@ -35,6 +36,14 @@ export function SettingsForm() {
       setError(e instanceof ApiError ? e.message : "Không lưu được, vui lòng thử lại.");
       setState("idle");
     }
+  };
+
+  const linkGoogle = async (idToken: string) => {
+    const { user: updated } = await api<{ user: User }>("/auth/google/link", {
+      method: "POST",
+      json: { idToken },
+    });
+    updateUser(updated);
   };
 
   return (
@@ -111,6 +120,19 @@ export function SettingsForm() {
         </div>
         <p className="text-xs text-muted">Email đăng nhập: {user.email}</p>
       </Card>
+      {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+        <Card className="mt-6 space-y-3 p-6">
+          <h2 className="text-base font-semibold">Đăng nhập bằng Google</h2>
+          {user.googleConnected ? (
+            <p className="text-sm text-success">Tài khoản Google đã được liên kết.</p>
+          ) : (
+            <>
+              <p className="text-sm text-muted">Liên kết tài khoản Google có cùng email để đăng nhập nhanh lần sau.</p>
+              <GoogleButton onCredential={linkGoogle} mode="continue_with" />
+            </>
+          )}
+        </Card>
+      )}
     </form>
   );
 }

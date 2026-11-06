@@ -34,6 +34,7 @@ export interface User {
   role: "USER" | "ADMIN";
   targetLevel: JlptLevel | null;
   createdAt: string;
+  googleConnected: boolean;
 }
 
 export interface QuestionTypeMeta {
