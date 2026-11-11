@@ -1,0 +1,64 @@
+.deck-study-screen,
+.deck-matching-screen {
+  /* FocusBar: h-14 + viền 1px. Phần học và các nút cùng nằm trong màn hình. */
+  height: calc(100dvh - 3.5rem - 1px);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.deck-study-screen > details {
+  flex-shrink: 0;
+  max-height: min(16rem, 35dvh);
+  overflow-y: auto;
+  padding-block: 0.25rem;
+}
+
+.deck-flashcard-viewport {
+  height: clamp(16rem, 55dvh, 28rem);
+  min-height: 0;
+}
+
+.deck-study-screen > .deck-flashcard-viewport {
+  height: auto;
+  flex: 1;
+}
+
+.deck-flashcard-viewport .flip-inner {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.deck-flashcard-viewport .flip-face {
+  min-height: 0;
+}
+
+.deck-matching-tile.jp {
+  line-height: 1.35;
+}
+
+@media (max-height: 640px) {
+  .deck-study-screen,
+  .deck-matching-screen {
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
+  .deck-study-screen > details {
+    max-height: 28dvh;
+  }
+
+  .deck-study-shortcuts,
+  .deck-matching-description {
+    display: none;
+  }
+}
+
+.deck-flashcard-viewport .flip-face > button {
+  justify-content: safe center;
+}
+
+.deck-matching-tile {
+  align-items: safe center;
+  justify-content: safe center;
+}

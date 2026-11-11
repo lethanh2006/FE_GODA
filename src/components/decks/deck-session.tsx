@@ -12,6 +12,7 @@ import {
 } from "@/components/vocab/speech-settings";
 import { stopJapanese } from "@/components/vocab/speak-button";
 import { api } from "@/lib/api";
+import { cn } from "@/lib/cn";
 import {
   shuffled,
   type PracticeAnswer,
@@ -22,6 +23,7 @@ import { DeckActivityPicker, type DeckActivity } from "./deck-activity-picker";
 import { DeckFlashcard } from "./deck-flashcard";
 import { DeckListening } from "./deck-listening";
 import { DeckMatching } from "./deck-matching";
+import "./deck-layout.css";
 
 export function DeckSession({ id }: { id: string }) {
   const { data, isLoading, mutate } = useSWR<DeckDetail>(`/decks/${id}`, {
@@ -51,7 +53,11 @@ export function DeckSession({ id }: { id: string }) {
       <EmptyState
         title="Bài học chưa có thẻ"
         description="Hãy chọn một bài học khác để bắt đầu."
-        action={<ButtonLink href={deckHomeHref(data.collection)}>Về danh sách bộ thẻ</ButtonLink>}
+        action={
+          <ButtonLink href={deckHomeHref(data.collection)}>
+            Về danh sách bộ thẻ
+          </ButtonLink>
+        }
       />
     );
   return <DeckFlow key={id} deck={data} />;
@@ -111,7 +117,14 @@ function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
         done={done}
         total={deck.cards.length}
       />
-      <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
+      <div
+        className={cn(
+          "mx-auto w-full max-w-4xl px-4 sm:px-6",
+          activity === "matching"
+            ? cn("deck-matching-screen", "flex min-h-0 flex-col py-3")
+            : "py-6 sm:py-10",
+        )}
+      >
         <Game
           key={`${activity}-${round}`}
           cards={deck.cards}
@@ -165,7 +178,9 @@ function LearnStep({
       const target = event.target as HTMLElement;
       if (
         event.repeat ||
-        target.closest("input, textarea, select, [contenteditable]")
+        target.closest(
+          'input, textarea, select, [contenteditable], [role="region"][tabindex]',
+        )
       )
         return;
       // Space giữ hành vi gốc của nút; mũi tên vẫn chuyển thẻ khi nút đang có focus.
@@ -192,8 +207,13 @@ function LearnStep({
         done={index + 1}
         total={order.length}
       />
-      <div className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div
+        className={cn(
+          "deck-study-screen",
+          "mx-auto flex min-h-0 w-full max-w-4xl flex-col gap-3 px-4 py-3 sm:px-6",
+        )}
+      >
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
           <Button variant="ghost" onClick={onExit}>
             <ArrowLeft className="size-4" aria-hidden /> Đổi cách học
           </Button>
@@ -214,7 +234,7 @@ function LearnStep({
           onFlip={flip}
           autoPlay={autoPlay}
         />
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex shrink-0 items-center justify-between gap-3">
           <Button
             size="lg"
             variant="secondary"
@@ -236,7 +256,12 @@ function LearnStep({
             </Button>
           )}
         </div>
-        <p className="hidden text-center text-sm text-muted sm:block">
+        <p
+          className={cn(
+            "deck-study-shortcuts",
+            "hidden shrink-0 text-center text-sm text-muted sm:block",
+          )}
+        >
           Phím tắt: Space lật thẻ · ← → chuyển thẻ · Bấm loa để nghe lại
         </p>
       </div>
@@ -348,7 +373,10 @@ function DoneStep({
               Chơi lại
             </Button>
             {deck.nextId && (
-              <ButtonLink href={`${deckHomeHref(deck.collection)}/${deck.nextId}`} variant="secondary">
+              <ButtonLink
+                href={`${deckHomeHref(deck.collection)}/${deck.nextId}`}
+                variant="secondary"
+              >
                 Bài tiếp theo
                 <ArrowRight className="size-4" aria-hidden />
               </ButtonLink>
