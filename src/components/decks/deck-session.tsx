@@ -6,6 +6,10 @@ import useSWR, { useSWRConfig } from "swr";
 import { FocusBar } from "@/components/learn/focus-bar";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorNotice, PageLoading } from "@/components/ui/feedback";
+import {
+  SpeechSettings,
+  useSpeechPreferences,
+} from "@/components/vocab/speech-settings";
 import { stopJapanese } from "@/components/vocab/speak-button";
 import { api } from "@/lib/api";
 import {
@@ -130,24 +134,29 @@ function LearnStep({
   onExit: () => void;
   onFinish: () => void;
 }) {
+  const { autoPlay } = useSpeechPreferences();
   const [order, setOrder] = useState<DeckCard[]>(deck.cards);
   const [isShuffled, setIsShuffled] = useState(false);
+  const [shuffleRound, setShuffleRound] = useState(0);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const card = order[index];
   const move = useCallback(
     (delta: number) => {
+      const next = Math.max(0, Math.min(order.length - 1, index + delta));
+      if (next === index) return;
       stopJapanese();
       setFlipped(false);
-      setIndex((i) => Math.max(0, Math.min(order.length - 1, i + delta)));
+      setIndex(next);
     },
-    [order.length],
+    [index, order.length],
   );
   const flip = useCallback(() => setFlipped((value) => !value), []);
   const toggleShuffle = () => {
     stopJapanese();
     setOrder(isShuffled ? deck.cards : shuffled(deck.cards));
     setIsShuffled((v) => !v);
+    setShuffleRound((round) => round + 1);
     setIndex(0);
     setFlipped(false);
   };
@@ -197,11 +206,13 @@ function LearnStep({
             {isShuffled ? "Đã trộn thẻ" : "Trộn thẻ"}
           </Button>
         </div>
+        <SpeechSettings />
         <DeckFlashcard
-          key={card.id}
+          key={`${shuffleRound}-${card.id}`}
           card={card}
           flipped={flipped}
           onFlip={flip}
+          autoPlay={autoPlay}
         />
         <div className="flex items-center justify-between gap-3">
           <Button
@@ -226,7 +237,7 @@ function LearnStep({
           )}
         </div>
         <p className="hidden text-center text-sm text-muted sm:block">
-          Phím tắt: Space lật thẻ · ← → chuyển thẻ · Bấm loa để nghe
+          Phím tắt: Space lật thẻ · ← → chuyển thẻ · Bấm loa để nghe lại
         </p>
       </div>
     </>

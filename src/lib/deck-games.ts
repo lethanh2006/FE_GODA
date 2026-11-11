@@ -23,7 +23,10 @@ export function shuffled<T>(items: readonly T[]): T[] {
 
 /** API cũ vẫn dùng được; không đọc dấu ngoặc và phần chữ Hán hai lần. */
 export function japaneseSpeechText(text: string): string {
-  return text.replace(/\{([^|{}]+)\|([^|{}]+)\}/g, "$2").trim();
+  return text
+    .replace(/\{([^|{}]+)\|([^|{}]+)\}/g, "$2")
+    .replace(/[（()）]/g, "")
+    .trim();
 }
 
 export const sameMeaning = (
@@ -43,4 +46,19 @@ export function listeningOptions<T extends Pick<DeckCard, "id" | "meaning">>(
     return true;
   });
   return shuffled([answer, ...distractors.slice(0, 3)]);
+}
+
+/** Câu hoàn chỉnh giữ chữ Hán để bộ đọc có ngữ cảnh, chỉ bỏ ký hiệu ruby. */
+export function japaneseSentenceText(text: string): string {
+  return text.replace(/\{([^|{}]+)\|([^|{}]+)\}/g, "$1").trim();
+}
+
+export function deckFrontFurigana(
+  card: Pick<DeckCard, "term" | "reading" | "furigana">,
+): string {
+  if (card.furigana && /\{[^|{}]+\|[^|{}]+\}/.test(card.furigana))
+    return card.furigana;
+  if (card.reading && card.reading !== card.term)
+    return `{${card.term}|${card.reading}}`;
+  return card.term;
 }

@@ -89,6 +89,8 @@ vercel --prod
 
 ## Học qua bộ thẻ
 
-Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật trước; nghĩa Việt, cách đọc và ví dụ ở mặt sau. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Phát âm dùng Web Speech của trình duyệt với `ja-JP`, cần thiết bị có giọng tiếng Nhật; không cần API key hay file âm thanh. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
+Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật kèm furigana ở mặt trước; nghĩa Việt và ví dụ ở mặt sau. Mở hoặc chuyển thẻ sẽ tự đọc từ, có thể tắt trong **Giọng đọc & tự phát âm**. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Phát âm dùng Web Speech với giọng Nhật được chọn rõ ràng sau khi danh sách giọng tải xong; không dùng giọng mặc định khác ngôn ngữ. Người học có thể chọn giọng Nhật và tốc độ 0,85× / 1× / 1,1×; lựa chọn được lưu trên thiết bị. Mặc định là 1×, ưu tiên giọng trực tuyến nếu có, không cần API key hay dịch vụ trả phí. Chất lượng vẫn phụ thuộc giọng được cài trên thiết bị, không tương đương bản thu đề thi JLPT. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
 
 Ghép cặp chia bài thành các lượt tối đa 5 cặp. Nghe chọn nghĩa dùng tối đa 4 nghĩa khác nhau và chỉ mở khi bài có ít nhất 2 nghĩa. Trả lời sai được thử lại. FE gửi các cặp đáp án của toàn bộ bài tới `POST /decks/:id/practice`; màn kết quả chỉ báo đã lưu sau khi BE xác nhận hoàn thành. Khi mất mạng, kết quả được giữ trong phiên để thử lưu lại. Triển khai BE có endpoint này trước FE; không cần migration cho tính năng này.
+
+Nội dung đọc từ dùng cách đọc đã có và bỏ dấu ngoặc của phần tùy chọn như `（する）`. Nội dung đọc câu ví dụ giữ chữ Hán, chỉ bỏ ký hiệu furigana để bộ đọc còn ngữ cảnh của câu. Khi chuyển thẻ hoặc rời trang, cả âm thanh đang phát lẫn yêu cầu đang chờ giọng đều được hủy.

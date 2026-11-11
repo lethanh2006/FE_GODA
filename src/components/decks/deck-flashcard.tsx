@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Furigana } from "@/components/vocab/furigana";
 import { SpeakButton } from "@/components/vocab/speak-button";
+import { deckFrontFurigana, japaneseSentenceText } from "@/lib/deck-games";
 import type { DeckCard } from "@/lib/decks";
 
 /** Luôn học từ tiếng Nhật trước, lật để xem nghĩa và câu ví dụ. */
@@ -11,11 +12,13 @@ export function DeckFlashcard({
   flipped,
   onFlip,
   showReading,
+  autoPlay = false,
 }: {
   card: DeckCard;
   flipped: boolean;
   onFlip: () => void;
   showReading?: boolean;
+  autoPlay?: boolean;
 }) {
   const front = useRef<HTMLButtonElement>(null);
   const back = useRef<HTMLButtonElement>(null);
@@ -34,7 +37,11 @@ export function DeckFlashcard({
           inert={flipped}
         >
           <div className="absolute top-4 right-4 z-10 sm:top-6 sm:right-6">
-            <SpeakButton text={speech} label="Nghe từ tiếng Nhật" />
+            <SpeakButton
+              text={speech}
+              label="Nghe từ tiếng Nhật"
+              autoPlay={autoPlay}
+            />
           </div>
           <button
             ref={front}
@@ -50,7 +57,7 @@ export function DeckFlashcard({
               className="jp w-full text-5xl leading-relaxed font-bold wrap-anywhere sm:text-7xl"
               lang="ja"
             >
-              {card.term}
+              <Furigana text={deckFrontFurigana(card)} />
             </span>
             {showReading && hasReading && (
               <span className="jp text-2xl text-muted" lang="ja">
@@ -112,7 +119,7 @@ export function DeckFlashcard({
                       <Furigana text={example.ja} />
                     </p>
                     <SpeakButton
-                      text={example.speechText || example.ja}
+                      text={japaneseSentenceText(example.ja)}
                       label={`Nghe câu ví dụ ${index + 1}`}
                     />
                   </div>

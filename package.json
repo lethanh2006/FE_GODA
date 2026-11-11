@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:decks": "node --experimental-strip-types --test tests/deck-games.test.mjs"
+    "test:decks": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.59.0",
