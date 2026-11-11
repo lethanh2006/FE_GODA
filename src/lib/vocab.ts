@@ -22,6 +22,14 @@ export interface WordSummary {
   meaningsEn: string[];
 }
 
+/** Từ liên quan để học tiếp (GĐ1 kế hoạch AI): backend đọc danh sách tính sẵn bằng model embedding. */
+export interface RelatedWordsResponse {
+  /** "disabled": tính năng đang tắt; "unavailable": file kết quả thiếu hoặc lỗi; "ready": có thể rỗng. */
+  status: "ready" | "disabled" | "unavailable";
+  source: { modelId: string; generatedAt: string } | null;
+  items: WordSummary[];
+}
+
 export interface KanjiSummary {
   char: string;
   level: JlptLevel;

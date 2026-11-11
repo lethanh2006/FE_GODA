@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
+import { RelatedWords } from "@/components/dictionary/related-words";
 import { Card } from "@/components/ui/card";
 import { PageLoading } from "@/components/ui/feedback";
 import { Furigana } from "@/components/vocab/furigana";
@@ -123,6 +124,8 @@ async function WordContent({ params }: { params: PageProps<"/tu-dien/[id]">["par
           </div>
         </Card>
       )}
+
+      <RelatedWords wordId={word.id} />
 
       {word.sameReading.length > 0 && (
         <Card className="space-y-3 p-5 sm:p-6">
