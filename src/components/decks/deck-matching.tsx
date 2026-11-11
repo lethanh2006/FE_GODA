@@ -3,8 +3,14 @@
 import { Check, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Furigana } from "@/components/vocab/furigana";
 import { cn } from "@/lib/cn";
-import { sameMeaning, shuffled, type PracticeAnswer } from "@/lib/deck-games";
+import {
+  deckFrontFurigana,
+  sameMeaning,
+  shuffled,
+  type PracticeAnswer,
+} from "@/lib/deck-games";
 import type { DeckCard } from "@/lib/decks";
 
 export function DeckMatching({
@@ -85,18 +91,22 @@ function MatchingRound({
     );
   };
   const tileClass =
-    "flex min-h-24 w-full items-center justify-center gap-2 rounded-2xl border-2 p-3 text-center leading-relaxed wrap-anywhere transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-28 sm:p-5";
+    "flex min-h-16 w-full items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 text-center leading-relaxed wrap-anywhere transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-18 sm:px-4";
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-3xl space-y-4">
       <div className="space-y-2">
         <p className="eyebrow">
           Lượt {round}/{rounds}
         </p>
-        <h1 className="text-3xl font-bold">Tìm cặp tương ứng</h1>
-        <p className="text-muted">Ghép hết các cặp để mở lượt tiếp theo.</p>
+        <h1 className="text-xl font-bold text-balance sm:text-2xl">
+          Tìm cặp tương ứng
+        </h1>
+        <p className="text-sm text-pretty text-muted">
+          Ghép hết các cặp để mở lượt tiếp theo.
+        </p>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-6">
-        <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="space-y-2">
           <h2 className="text-sm font-semibold text-muted">Tiếng Nhật</h2>
           {cards.map((card) => {
             const matched = pairs.some((pair) => pair.cardId === card.id);
@@ -113,7 +123,7 @@ function MatchingRound({
                 }}
                 className={cn(
                   tileClass,
-                  "jp text-2xl font-semibold sm:text-3xl",
+                  "jp text-lg font-semibold sm:text-xl",
                   matched
                     ? "border-success/30 bg-success/10 text-success"
                     : selected === card.id
@@ -122,14 +132,14 @@ function MatchingRound({
                 )}
               >
                 {matched && (
-                  <Check className="size-5 shrink-0" aria-label="Đã ghép" />
+                  <Check className="size-4 shrink-0" aria-label="Đã ghép" />
                 )}
-                {card.term}
+                <Furigana text={deckFrontFurigana(card)} />
               </button>
             );
           })}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <h2 className="text-sm font-semibold text-muted">Tiếng Việt</h2>
           {right.map((card) => {
             const matched = pairs.some((pair) => pair.answerId === card.id);
@@ -141,14 +151,14 @@ function MatchingRound({
                 onClick={() => chooseMeaning(card)}
                 className={cn(
                   tileClass,
-                  "text-lg font-medium sm:text-xl",
+                  "text-sm font-medium sm:text-base",
                   matched
                     ? "border-success/30 bg-success/10 text-success"
                     : "border-border bg-card hover:border-primary/40",
                 )}
               >
                 {matched && (
-                  <Check className="size-5 shrink-0" aria-label="Đã ghép" />
+                  <Check className="size-4 shrink-0" aria-label="Đã ghép" />
                 )}
                 {card.meaning}
               </button>
@@ -156,7 +166,7 @@ function MatchingRound({
           })}
         </div>
       </div>
-      <p role="status" className="min-h-12 text-center text-base text-muted">
+      <p role="status" className="min-h-10 text-center text-sm text-muted">
         {message}
       </p>
       {complete && (
