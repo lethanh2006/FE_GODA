@@ -17,7 +17,7 @@ import {
   type PracticeAnswer,
   type PracticeResult,
 } from "@/lib/deck-games";
-import type { DeckCard, DeckDetail } from "@/lib/decks";
+import { deckHomeHref, type DeckCard, type DeckDetail } from "@/lib/decks";
 import { DeckActivityPicker, type DeckActivity } from "./deck-activity-picker";
 import { DeckFlashcard } from "./deck-flashcard";
 import { DeckListening } from "./deck-listening";
@@ -51,7 +51,7 @@ export function DeckSession({ id }: { id: string }) {
       <EmptyState
         title="Bài học chưa có thẻ"
         description="Hãy chọn một bài học khác để bắt đầu."
-        action={<ButtonLink href="/bo-the">Về danh sách bộ thẻ</ButtonLink>}
+        action={<ButtonLink href={deckHomeHref(data.collection)}>Về danh sách bộ thẻ</ButtonLink>}
       />
     );
   return <DeckFlow key={id} deck={data} />;
@@ -348,14 +348,14 @@ function DoneStep({
               Chơi lại
             </Button>
             {deck.nextId && (
-              <ButtonLink href={`/bo-the/${deck.nextId}`} variant="secondary">
+              <ButtonLink href={`${deckHomeHref(deck.collection)}/${deck.nextId}`} variant="secondary">
                 Bài tiếp theo
                 <ArrowRight className="size-4" aria-hidden />
               </ButtonLink>
             )}
           </>
         )}
-        <ButtonLink href="/bo-the" variant="ghost">
+        <ButtonLink href={deckHomeHref(deck.collection)} variant="ghost">
           Về danh sách
         </ButtonLink>
       </div>

@@ -8,7 +8,7 @@ import {
   Link2,
 } from "lucide-react";
 import Link from "next/link";
-import type { DeckDetail } from "@/lib/decks";
+import { deckHomeHref, type DeckDetail } from "@/lib/decks";
 import type { PracticeMode } from "@/lib/deck-games";
 
 export type DeckActivity = "flashcards" | PracticeMode;
@@ -54,7 +54,7 @@ export function DeckActivityPicker({
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-14">
       <Link
-        href="/bo-the"
+        href={deckHomeHref(deck.collection)}
         className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-medium text-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
       >
         <ArrowLeft className="size-4" aria-hidden /> Tất cả bộ thẻ

@@ -21,7 +21,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { cn } from "@/lib/cn";
 import {
   type DeckList,
+  type DeckCollection,
   type DeckReviewCard,
+  DECK_COLLECTIONS,
   groupByChapter,
 } from "@/lib/decks";
 import { formatNumber } from "@/lib/format";
@@ -41,16 +43,25 @@ const DECK_SOURCE: ReviewSource<DeckReviewCard> = {
   exitLabel: "Về danh sách bộ thẻ",
 };
 
-export function DeckHome() {
+export function DeckHome({
+  collection = "private",
+}: {
+  collection?: DeckCollection;
+}) {
+  const config = DECK_COLLECTIONS[collection];
   const [reviewing, setReviewing] = useState(false);
-  const { data, error, mutate } = useSWR<DeckList>("/decks");
+  const { data, error, mutate } = useSWR<DeckList>(config.listPath);
 
   if (reviewing) {
     return (
       <div className="focus-mode flex flex-1 flex-col">
         <FrameMode mode="focus" />
         <ReviewRun
-          source={DECK_SOURCE}
+          source={{
+            ...DECK_SOURCE,
+            title: collection === "dung-mori-n4" ? "Ôn N4 Dũng Mori" : DECK_SOURCE.title,
+            queuePath: config.queuePath,
+          }}
           onExit={() => {
             setReviewing(false);
             void mutate();
@@ -62,8 +73,8 @@ export function DeckHome() {
 
   const header = (
     <PageHeader
-      title="Bộ thẻ"
-      description="Chọn bài học, lật thẻ, ghép cặp và luyện nghe tiếng Nhật. GODA nhắc bạn ôn lại đúng lúc."
+      title={config.title}
+      description={config.description}
     />
   );
   if (error)
@@ -86,7 +97,11 @@ export function DeckHome() {
         {header}
         <EmptyState
           title="Chưa có bộ thẻ nào"
-          description="Bộ thẻ riêng được nạp vào tài khoản bằng lệnh decks:import của backend."
+          description={
+            collection === "private"
+              ? "Các bộ thẻ của bạn sẽ xuất hiện ở đây. Bạn có thể học bộ N4 Dũng Mori trong mục riêng trên thanh điều hướng."
+              : "Nội dung đang được chuẩn bị. Vui lòng thử lại sau."
+          }
         />
       </>
     );
@@ -121,7 +136,7 @@ export function DeckHome() {
           )}
           {next && (
             <ButtonLink
-              href={`/bo-the/${next.id}`}
+              href={`${config.href}/${next.id}`}
               size="lg"
               variant={data.due > 0 ? "secondary" : "primary"}
             >
@@ -142,7 +157,7 @@ export function DeckHome() {
               return (
                 <li key={deck.id}>
                   <Link
-                    href={`/bo-the/${deck.id}`}
+                    href={`${config.href}/${deck.id}`}
                     className={cn(
                       "panel flex h-full min-h-28 flex-col justify-center gap-3 p-5 transition-colors hover:border-primary/40",
                       deck.id === next?.id && "border-primary/50",

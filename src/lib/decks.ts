@@ -1,6 +1,27 @@
 import type { JlptLevel } from "./types";
 
-/** Bộ thẻ riêng của người dùng (ví dụ thẻ theo bài của khoá học đang theo). */
+export type DeckCollection = "private" | "dung-mori-n4";
+
+export const DECK_COLLECTIONS = {
+  private: {
+    title: "Bộ thẻ",
+    description: "Chọn bài học, lật thẻ, ghép cặp và luyện nghe tiếng Nhật. GODA nhắc bạn ôn lại đúng lúc.",
+    href: "/bo-the",
+    listPath: "/decks",
+    queuePath: "/decks/queue?limit=20",
+  },
+  "dung-mori-n4": {
+    title: "Từ vựng N4 Dũng Mori",
+    description: "Học từ vựng và chữ Hán N4 Dũng Mori qua lật thẻ, ghép cặp và luyện nghe. Nội dung dành cho mọi tài khoản đã đăng nhập, tiến độ học được lưu riêng cho bạn.",
+    href: "/tu-vung-n4-dung-mori",
+    listPath: "/decks?collection=dung-mori-n4",
+    queuePath: "/decks/queue?collection=dung-mori-n4&limit=20",
+  },
+} as const;
+
+export function deckHomeHref(collection: DeckCollection = "private") {
+  return DECK_COLLECTIONS[collection].href;
+}
 
 export interface DeckSummary {
   id: string;
@@ -35,6 +56,7 @@ export interface DeckCard {
 
 export interface DeckDetail {
   id: string;
+  collection: DeckCollection;
   course: string;
   level: JlptLevel | null;
   chapter: number | null;
