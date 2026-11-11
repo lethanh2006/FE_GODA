@@ -28,7 +28,8 @@ export interface DeckCard {
   hanviet: string | null;
   wordType: string | null;
   meaning: string;
-  examples: { ja: string; vi: string | null }[];
+  speechText?: string;
+  examples: { ja: string; vi: string | null; speechText?: string }[];
   learned: boolean;
 }
 
@@ -61,8 +62,14 @@ export function groupByChapter(decks: DeckSummary[]): DeckChapter[] {
   const groups: DeckChapter[] = [];
   for (const deck of decks) {
     const last = groups.at(-1);
-    if (last && last.course === deck.course && last.chapter === deck.chapter) last.decks.push(deck);
-    else groups.push({ course: deck.course, chapter: deck.chapter, decks: [deck] });
+    if (last && last.course === deck.course && last.chapter === deck.chapter)
+      last.decks.push(deck);
+    else
+      groups.push({
+        course: deck.course,
+        chapter: deck.chapter,
+        decks: [deck],
+      });
   }
   return groups;
 }

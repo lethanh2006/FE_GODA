@@ -6,7 +6,8 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:decks": "node --experimental-strip-types --test tests/deck-games.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.59.0",

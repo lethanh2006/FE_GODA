@@ -22,6 +22,7 @@ Trình duyệt luôn gọi `/api/*` trên chính domain của web. Next.js proxy
 | `pnpm dev` | Chạy dev |
 | `pnpm build` / `pnpm start` | Build và chạy bản production |
 | `pnpm lint` | ESLint |
+| `pnpm test:decks` | Kiểm tra trộn thẻ, đáp án nghe và chuyển furigana thành nội dung đọc (Node ≥ 22) |
 
 ## Các trang
 
@@ -31,6 +32,8 @@ Trình duyệt luôn gọi `/api/*` trên chính domain của web. Next.js proxy
 | `/luyen-thi` | Tổng quan luyện thi, chọn cấp độ, cấu trúc đề JLPT |
 | `/hoc-tu`, `/hoc-tu/[level]` | Chọn cấp, danh sách bài từ vựng (mỗi bài 20 từ) kèm tiến độ |
 | `/hoc-tu/[level]/[no]` | Phiên học tập trung: thẻ ghi nhớ, kiểm tra, lưu vào sổ ôn. Khách học được, đăng nhập sau vẫn giữ tiến độ |
+| `/bo-the` | Bộ thẻ riêng theo bài, tiến độ và ôn FSRS |
+| `/bo-the/[id]` | Chọn lật thẻ, ghép Nhật–Việt hoặc nghe chọn nghĩa; hoàn thành để đưa bài vào lịch ôn |
 | `/on-tap` | Ôn tập ngắt quãng (FSRS): 4 mức đánh giá kèm lịch ôn dự kiến, phím Space và 1–4 |
 | `/so-tu` | Sổ từ: lọc theo trạng thái và cấp, đánh dấu đã biết, xoá |
 | `/tu-dien`, `/tu-dien/[id]` | Tra từ có gợi ý; chi tiết từ: nghĩa, âm Hán Việt, ví dụ, phân tích chữ Hán, phát âm |
@@ -82,3 +85,10 @@ vercel --prod
 ```
 
 `API_INTERNAL_URL` được đọc lúc build (rewrite trong `next.config.ts`), nên sau khi đổi biến phải deploy lại.
+
+
+## Học qua bộ thẻ
+
+Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật trước; nghĩa Việt, cách đọc và ví dụ ở mặt sau. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Phát âm dùng Web Speech của trình duyệt với `ja-JP`, cần thiết bị có giọng tiếng Nhật; không cần API key hay file âm thanh. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
+
+Ghép cặp chia bài thành các lượt tối đa 5 cặp. Nghe chọn nghĩa dùng tối đa 4 nghĩa khác nhau và chỉ mở khi bài có ít nhất 2 nghĩa. Trả lời sai được thử lại. FE gửi các cặp đáp án của toàn bộ bài tới `POST /decks/:id/practice`; màn kết quả chỉ báo đã lưu sau khi BE xác nhận hoàn thành. Khi mất mạng, kết quả được giữ trong phiên để thử lưu lại. Triển khai BE có endpoint này trước FE; không cần migration cho tính năng này.

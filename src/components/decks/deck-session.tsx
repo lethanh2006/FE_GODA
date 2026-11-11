@@ -1,179 +1,352 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Languages, Shuffle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Shuffle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { FocusBar } from "@/components/learn/focus-bar";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { ErrorNotice, PageLoading } from "@/components/ui/feedback";
-import { speakJapanese } from "@/components/vocab/speak-button";
+import { EmptyState, ErrorNotice, PageLoading } from "@/components/ui/feedback";
+import { stopJapanese } from "@/components/vocab/speak-button";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/cn";
+import {
+  shuffled,
+  type PracticeAnswer,
+  type PracticeResult,
+} from "@/lib/deck-games";
 import type { DeckCard, DeckDetail } from "@/lib/decks";
+import { DeckActivityPicker, type DeckActivity } from "./deck-activity-picker";
 import { DeckFlashcard } from "./deck-flashcard";
-
-const EXIT_HREF = "/bo-the";
-
-const shuffled = <T,>(items: readonly T[]) => {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-};
+import { DeckListening } from "./deck-listening";
+import { DeckMatching } from "./deck-matching";
 
 export function DeckSession({ id }: { id: string }) {
-  const { data, error, isLoading, mutate } = useSWR<DeckDetail>(`/decks/${id}`, { revalidateIfStale: false });
-
+  const { data, isLoading, mutate } = useSWR<DeckDetail>(`/decks/${id}`, {
+    revalidateIfStale: false,
+  });
   if (isLoading) return <PageLoading label="Đang chuẩn bị bộ thẻ…" />;
-  if (error || !data) {
+  if (!data) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-10">
         <ErrorNotice
           message="Không tải được bộ thẻ. Vui lòng thử lại."
-          action={<button type="button" className="font-semibold underline" onClick={() => void mutate()}>Thử lại</button>}
+          action={
+            <button
+              type="button"
+              className="font-semibold underline"
+              onClick={() => void mutate()}
+            >
+              Thử lại
+            </button>
+          }
         />
       </div>
     );
   }
+  if (!data.cards.length)
+    return (
+      <EmptyState
+        title="Bài học chưa có thẻ"
+        description="Hãy chọn một bài học khác để bắt đầu."
+        action={<ButtonLink href="/bo-the">Về danh sách bộ thẻ</ButtonLink>}
+      />
+    );
   return <DeckFlow key={id} deck={data} />;
 }
 
-function DeckFlow({ deck }: { deck: DeckDetail }) {
+type Completion = {
+  activity: DeckActivity;
+  answers?: PracticeAnswer[];
+  mistakes: number;
+};
+
+function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
+  // Mỗi lượt chơi dùng một ảnh chụp nội dung; reconnect không đổi bộ câu hỏi giữa lượt.
+  const [deck, setDeck] = useState(latestDeck);
+  const [activity, setActivity] = useState<DeckActivity | null>(null);
+  const [completion, setCompletion] = useState<Completion | null>(null);
   const [round, setRound] = useState(0);
-  const [finished, setFinished] = useState(false);
-  if (finished) return <DoneStep deck={deck} onAgain={() => { setFinished(false); setRound((r) => r + 1); }} />;
-  return <LearnStep key={round} deck={deck} onFinish={() => setFinished(true)} />;
-}
-
-function Toggle({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: typeof Shuffle; label: string }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex min-h-9 items-center gap-1.5 rounded-xl border px-3 text-[13px] font-medium transition-colors",
-        active ? "border-primary bg-primary-soft text-primary" : "border-border bg-card text-muted hover:text-foreground",
-      )}
-    >
-      <Icon className="size-4" aria-hidden /> {label}
-    </button>
-  );
-}
-
-function LearnStep({ deck, onFinish }: { deck: DeckDetail; onFinish: () => void }) {
-  const [order, setOrder] = useState<DeckCard[]>(deck.cards);
-  const [isShuffled, setIsShuffled] = useState(false);
-  const [meaningFirst, setMeaningFirst] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const card = order[index];
-  const isLast = index === order.length - 1;
-
-  const move = useCallback(
-    (delta: number) => {
-      setFlipped(false);
-      setIndex((i) => Math.max(0, Math.min(order.length - 1, i + delta)));
-    },
-    [order.length],
-  );
-
-  const flip = useCallback(() => {
-    setFlipped((value) => {
-      if (!value && card.reading) speakJapanese(card.reading);
-      return !value;
-    });
-  }, [card.reading]);
-
-  const toggleShuffle = () => {
-    setOrder(isShuffled ? deck.cards : shuffled(deck.cards));
-    setIsShuffled((v) => !v);
-    setIndex(0);
-    setFlipped(false);
+  const [done, setDone] = useState(0);
+  useEffect(() => () => stopJapanese(), [activity, completion]);
+  const choose = (next: DeckActivity | null) => {
+    if (next) setDeck(latestDeck);
+    setActivity(next);
+    setCompletion(null);
+    setDone(0);
+    setRound((n) => n + 1);
   };
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.target as HTMLElement).closest("input, textarea")) return;
-      if (event.key === " ") {
-        event.preventDefault();
-        flip();
-      } else if (event.key === "ArrowRight") move(1);
-      else if (event.key === "ArrowLeft") move(-1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [flip, move]);
-
+  if (completion)
+    return (
+      <DoneStep
+        deck={deck}
+        completion={completion}
+        onAgain={() => choose(completion.activity)}
+        onChoose={() => choose(null)}
+      />
+    );
+  if (!activity)
+    return <DeckActivityPicker deck={latestDeck} onChoose={choose} />;
+  if (activity === "flashcards")
+    return (
+      <LearnStep
+        key={round}
+        deck={deck}
+        onExit={() => choose(null)}
+        onFinish={() => setCompletion({ activity, mistakes: 0 })}
+      />
+    );
+  const Game = activity === "matching" ? DeckMatching : DeckListening;
   return (
     <>
-      <FocusBar exitHref={EXIT_HREF} title={deck.title} done={index + 1} total={order.length} />
-      <div className="mx-auto w-full max-w-2xl space-y-5 px-4 py-8">
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <Toggle active={isShuffled} onClick={toggleShuffle} icon={Shuffle} label="Trộn thẻ" />
-          <Toggle
-            active={meaningFirst}
-            onClick={() => { setMeaningFirst((v) => !v); setFlipped(false); }}
-            icon={Languages}
-            label="Hiện nghĩa trước"
-          />
-        </div>
-        <DeckFlashcard key={card.id} card={card} flipped={flipped} meaningFirst={meaningFirst} onFlip={flip} />
-        <div className="flex items-center justify-between gap-3">
-          <Button variant="secondary" disabled={index === 0} onClick={() => move(-1)}>
-            <ArrowLeft className="size-4" aria-hidden /> Trước
-          </Button>
-          {isLast ? (
-            <Button onClick={onFinish}>
-              Xong bài <ArrowRight className="size-4" aria-hidden />
-            </Button>
-          ) : (
-            <Button onClick={() => move(1)}>
-              Thẻ tiếp <ArrowRight className="size-4" aria-hidden />
-            </Button>
-          )}
-        </div>
-        <p className="hidden text-center text-xs text-muted sm:block">Phím tắt: Space lật thẻ · ← → chuyển thẻ</p>
+      <FocusBar
+        onExit={() => choose(null)}
+        title={
+          activity === "matching"
+            ? `${deck.title} · Ghép cặp`
+            : `${deck.title} · Luyện nghe`
+        }
+        done={done}
+        total={deck.cards.length}
+      />
+      <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
+        <Game
+          key={`${activity}-${round}`}
+          cards={deck.cards}
+          onProgress={setDone}
+          onFinish={(answers, mistakes) =>
+            setCompletion({ activity, answers, mistakes })
+          }
+        />
       </div>
     </>
   );
 }
 
-function DoneStep({ deck, onAgain }: { deck: DeckDetail; onAgain: () => void }) {
-  const { mutate } = useSWRConfig();
-  const [saveFailed, setSaveFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-
-  // Gọi lại không sao: thẻ đã có lịch ôn được giữ nguyên.
+function LearnStep({
+  deck,
+  onExit,
+  onFinish,
+}: {
+  deck: DeckDetail;
+  onExit: () => void;
+  onFinish: () => void;
+}) {
+  const [order, setOrder] = useState<DeckCard[]>(deck.cards);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const card = order[index];
+  const move = useCallback(
+    (delta: number) => {
+      stopJapanese();
+      setFlipped(false);
+      setIndex((i) => Math.max(0, Math.min(order.length - 1, i + delta)));
+    },
+    [order.length],
+  );
+  const flip = useCallback(() => setFlipped((value) => !value), []);
+  const toggleShuffle = () => {
+    stopJapanese();
+    setOrder(isShuffled ? deck.cards : shuffled(deck.cards));
+    setIsShuffled((v) => !v);
+    setIndex(0);
+    setFlipped(false);
+  };
   useEffect(() => {
-    api(`/decks/${deck.id}/learned`, { method: "POST" })
-      .then(() => mutate((key) => typeof key === "string" && key.startsWith("/decks"), undefined, { revalidate: true }))
-      .catch(() => setSaveFailed(true));
-  }, [attempt, deck.id, mutate]);
-
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        event.repeat ||
+        target.closest("input, textarea, select, [contenteditable]")
+      )
+        return;
+      // Space giữ hành vi gốc của nút; mũi tên vẫn chuyển thẻ khi nút đang có focus.
+      if (event.key === " " && target.closest("button, a")) return;
+      if (event.key === " ") {
+        event.preventDefault();
+        flip();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        move(1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        move(-1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [flip, move]);
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-5 px-4 py-14 text-center">
-      <span className="jp flex size-20 items-center justify-center rounded-2xl bg-primary-soft text-4xl font-bold text-primary">合</span>
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Xong {deck.title}!</h1>
-        <p className="text-muted">{deck.cards.length} thẻ đã vào lịch ôn. GODA sẽ nhắc bạn ôn lại đúng lúc sắp quên.</p>
+    <>
+      <FocusBar
+        onExit={onExit}
+        title={deck.title}
+        done={index + 1}
+        total={order.length}
+      />
+      <div className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Button variant="ghost" onClick={onExit}>
+            <ArrowLeft className="size-4" aria-hidden /> Đổi cách học
+          </Button>
+          <Button
+            variant="secondary"
+            aria-pressed={isShuffled}
+            onClick={toggleShuffle}
+          >
+            <Shuffle className="size-4" aria-hidden />
+            {isShuffled ? "Đã trộn thẻ" : "Trộn thẻ"}
+          </Button>
+        </div>
+        <DeckFlashcard
+          key={card.id}
+          card={card}
+          flipped={flipped}
+          onFlip={flip}
+        />
+        <div className="flex items-center justify-between gap-3">
+          <Button
+            size="lg"
+            variant="secondary"
+            disabled={index === 0}
+            onClick={() => move(-1)}
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Trước
+          </Button>
+          {index === order.length - 1 ? (
+            <Button size="lg" onClick={onFinish}>
+              Xong bài
+              <Check className="size-5" aria-hidden />
+            </Button>
+          ) : (
+            <Button size="lg" onClick={() => move(1)}>
+              Thẻ tiếp
+              <ArrowRight className="size-5" aria-hidden />
+            </Button>
+          )}
+        </div>
+        <p className="hidden text-center text-sm text-muted sm:block">
+          Phím tắt: Space lật thẻ · ← → chuyển thẻ · Bấm loa để nghe
+        </p>
       </div>
-      {saveFailed && (
+    </>
+  );
+}
+
+function DoneStep({
+  deck,
+  completion,
+  onAgain,
+  onChoose,
+}: {
+  deck: DeckDetail;
+  completion: Completion;
+  onAgain: () => void;
+  onChoose: () => void;
+}) {
+  const { mutate } = useSWRConfig();
+  const [status, setStatus] = useState<"saving" | "saved" | "error">("saving");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    const save =
+      completion.activity === "flashcards"
+        ? api(`/decks/${deck.id}/learned`, { method: "POST" })
+        : api<PracticeResult>(`/decks/${deck.id}/practice`, {
+            method: "POST",
+            json: { mode: completion.activity, answers: completion.answers },
+          }).then((result) => {
+            if (!result.completed)
+              throw new Error(
+                "Nội dung bài đã thay đổi. Hãy quay lại chọn hoạt động và luyện lại bài này.",
+              );
+          });
+    void save
+      .then(() => {
+        if (active) setStatus("saved");
+        // Làm mới dữ liệu không quyết định kết quả lưu đã được API xác nhận.
+        void mutate(
+          (key) => typeof key === "string" && key.startsWith("/decks"),
+          undefined,
+          { populateCache: false, revalidate: true },
+        ).catch(() => undefined);
+      })
+      .catch((error: unknown) => {
+        if (active) {
+          void mutate(`/decks/${deck.id}`).catch(() => undefined);
+          setStatus("error");
+          setErrorMessage(
+            error instanceof Error
+              ? error.message
+              : "Chưa lưu được tiến độ. Vui lòng thử lại.",
+          );
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [attempt, completion, deck.id, mutate]);
+  return (
+    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-6 px-4 py-14 text-center">
+      <span className="flex size-20 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+        <Check className="size-10" aria-hidden />
+      </span>
+      <div className="space-y-3">
+        <p className="eyebrow">Mỗi lượt học, nhớ thêm một chút</p>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          Bạn đã luyện xong {deck.title}!
+        </h1>
+        <p className="text-lg text-muted">
+          {deck.cards.length} thẻ đã luyện
+          {completion.activity !== "flashcards" &&
+            ` · ${completion.mistakes} lần thử chưa đúng`}
+        </p>
+      </div>
+      <div role="status" className="text-base text-muted">
+        {status === "saving"
+          ? "Đang lưu tiến độ…"
+          : status === "saved"
+            ? "Đã lưu vào lịch ôn. GODA sẽ nhắc bạn ôn lại đúng lúc."
+            : "Tiến độ chưa được lưu."}
+      </div>
+      {status === "error" && (
         <ErrorNotice
-          message="Chưa lưu được tiến độ."
-          action={<button type="button" className="font-semibold underline" onClick={() => { setSaveFailed(false); setAttempt((n) => n + 1); }}>Thử lại</button>}
+          message={errorMessage}
+          action={
+            <button
+              type="button"
+              className="font-semibold underline"
+              onClick={() => {
+                setStatus("saving");
+                setAttempt((n) => n + 1);
+              }}
+            >
+              Thử lưu lại
+            </button>
+          }
         />
       )}
       <div className="flex flex-wrap justify-center gap-3">
-        {deck.nextId && (
-          <ButtonLink href={`/bo-the/${deck.nextId}`}>
-            Bộ tiếp theo <ArrowRight className="size-4" aria-hidden />
-          </ButtonLink>
+        <Button onClick={onChoose} disabled={status === "saving"}>
+          Chọn hoạt động khác
+        </Button>
+        {status === "saved" && (
+          <>
+            <Button variant="secondary" onClick={onAgain}>
+              Chơi lại
+            </Button>
+            {deck.nextId && (
+              <ButtonLink href={`/bo-the/${deck.nextId}`} variant="secondary">
+                Bài tiếp theo
+                <ArrowRight className="size-4" aria-hidden />
+              </ButtonLink>
+            )}
+          </>
         )}
-        <Button variant="secondary" onClick={onAgain}>Lật lại bộ này</Button>
-        <ButtonLink href={EXIT_HREF} variant="secondary">Về danh sách</ButtonLink>
+        <ButtonLink href="/bo-the" variant="ghost">
+          Về danh sách
+        </ButtonLink>
       </div>
     </div>
   );
