@@ -94,3 +94,9 @@ Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nh�
 Ghép cặp chia bài thành các lượt tối đa 5 cặp. Nghe chọn nghĩa dùng tối đa 4 nghĩa khác nhau và chỉ mở khi bài có ít nhất 2 nghĩa. Trả lời sai được thử lại. FE gửi các cặp đáp án của toàn bộ bài tới `POST /decks/:id/practice`; màn kết quả chỉ báo đã lưu sau khi BE xác nhận hoàn thành. Khi mất mạng, kết quả được giữ trong phiên để thử lưu lại. Triển khai BE có endpoint này trước FE; không cần migration cho tính năng này.
 
 Nội dung đọc từ dùng cách đọc đã có và bỏ dấu ngoặc của phần tùy chọn như `（する）`. Nội dung đọc câu ví dụ giữ chữ Hán, chỉ bỏ ký hiệu furigana để bộ đọc còn ngữ cảnh của câu. Khi chuyển thẻ hoặc rời trang, cả âm thanh đang phát lẫn yêu cầu đang chờ giọng đều được hủy.
+
+## Ngữ pháp N4 bổ trợ
+
+`/ngu-phap-n4` dành cho tài khoản đã đăng nhập, bám các chương 15–33 của khóa N4 đang học. Mỗi mục đi theo cách dùng → công thức → ví dụ có furigana và tiếng Việt → lỗi dễ nhầm → chọn đáp án/ghép câu. Có bảng nhắc cách chia ngay trong bài, lưu câu sai, luyện lại và tiếp tục trên thiết bị khác. Các chương từ vựng N4 có liên kết trực tiếp tới ngữ pháp cùng chương.
+
+Nội dung và đáp án chuẩn ở backend; client chỉ nhận lời giải sau khi gửi câu trả lời. Tiến độ dùng API `/grammar/n4`, không lưu riêng trong localStorage. Bộ học bổ trợ do Goda biên soạn theo mục lục nguồn, có liên kết đối chiếu ở mỗi chương.

@@ -147,10 +147,15 @@ export function DeckHome({
       </Card>
       {groupByChapter(data.decks).map((group) => (
         <section key={`${group.course}-${group.chapter}`} className="space-y-3">
-          <h2 className="text-[15px] font-semibold">
-            {group.course}
-            {group.chapter !== null && ` · Chương ${group.chapter}`}
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-[15px] font-semibold">
+              {group.course}
+              {group.chapter !== null && ` · Chương ${group.chapter}`}
+            </h2>
+            {collection === "dung-mori-n4" && group.chapter !== null && group.chapter >= 15 && group.chapter <= 33 && (
+              <Link href={`/ngu-phap-n4/${group.chapter}`} className="rounded-lg px-2 py-2 text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary">Ngữ pháp chương {group.chapter}</Link>
+            )}
+          </div>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {group.decks.map((deck) => {
               const finished = deck.cards > 0 && deck.learned >= deck.cards;

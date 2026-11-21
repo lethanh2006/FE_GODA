@@ -33,6 +33,7 @@ export const NAV_MAIN: NavLink[] = [
     shortLabel: "N4 Dũng Mori",
     icon: BookMarked,
   },
+  { href: "/ngu-phap-n4", label: "Ngữ pháp N4", icon: BookOpen },
   { href: "/luyen-thi", label: "Luyện thi", icon: Target },
   { href: "/tu-dien", label: "Từ điển", icon: Search },
 ];
@@ -53,7 +54,7 @@ export const NAV_ADMIN: NavLink = { href: "/admin/reports", label: "Quản trị
 
 /** Khách chỉ thấy các mục học tập cho phép truy cập khi chưa đăng nhập. */
 export const NAV_GUEST: NavLink[] = NAV_MAIN.filter(
-  (link) => !["/on-tap", "/bo-the", "/tu-vung-n4-dung-mori"].includes(link.href),
+  (link) => !["/on-tap", "/bo-the", "/tu-vung-n4-dung-mori", "/ngu-phap-n4"].includes(link.href),
 );
 
 const LEVEL_PATH = /^\/n[1-5](\/|$)/;
