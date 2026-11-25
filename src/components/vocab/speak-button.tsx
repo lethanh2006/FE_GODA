@@ -5,22 +5,38 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { japaneseSpeechText } from "@/lib/deck-games";
 import { createJapaneseSpeaker } from "@/lib/japanese-speech";
+import { createJapaneseAudioSpeaker } from "@/lib/japanese-audio";
+import japaneseAudio from "@/lib/data/japanese-audio.json";
 import { readSpeechPreferences } from "@/lib/speech-preferences";
 
 let speaker: ReturnType<typeof createJapaneseSpeaker> | undefined;
+let audioSpeaker: ReturnType<typeof createJapaneseAudioSpeaker> | undefined;
 
 export function stopJapanese() {
   speaker?.stop();
+  audioSpeaker?.stop();
 }
 
-/** Chờ danh sách giọng và chỉ phát bằng một giọng Nhật cụ thể. */
+/** Prefer shared MP3s so catalog audio works without installed Japanese voices. */
 export async function speakJapanese(
   text: string,
   onError?: () => void,
   signal?: AbortSignal,
 ): Promise<boolean> {
+  stopJapanese();
+  if (typeof window === "undefined") return false;
+  const preferences = readSpeechPreferences();
+  const speechText = japaneseSpeechText(text);
+  const recordings: Readonly<Record<string, string>> = japaneseAudio;
+  if (Object.hasOwn(recordings, speechText)) {
+    audioSpeaker ??= createJapaneseAudioSpeaker((src) => new Audio(src));
+    return audioSpeaker.speak(recordings[speechText], {
+      rate: preferences.rate,
+      onError,
+      signal,
+    });
+  }
   if (
-    typeof window === "undefined" ||
     !("speechSynthesis" in window) ||
     typeof SpeechSynthesisUtterance === "undefined"
   ) {
@@ -31,8 +47,7 @@ export async function speakJapanese(
     window.speechSynthesis,
     SpeechSynthesisUtterance,
   );
-  const preferences = readSpeechPreferences();
-  return speaker.speak(japaneseSpeechText(text), {
+  return speaker.speak(speechText, {
     voiceURI: preferences.voiceURI,
     rate: preferences.rate,
     onError,
@@ -94,8 +109,8 @@ export function SpeakButton({
           role="status"
           className="max-w-44 text-center text-xs text-danger"
         >
-          Chưa phát được giọng Nhật. Hãy cài giọng tiếng Nhật trên thiết bị hoặc
-          bấm loa để thử lại.
+          Chưa phát được âm thanh. Hãy bấm loa để nghe lại và kiểm tra kết nối
+          mạng.
         </span>
       )}
     </span>

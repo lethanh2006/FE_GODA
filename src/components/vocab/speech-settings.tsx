@@ -63,7 +63,7 @@ export function SpeechSettings() {
       </summary>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="flex min-w-0 flex-col gap-2 text-sm font-medium">
-          Giọng tiếng Nhật
+          Giọng thiết bị cho nội dung khác
           <select
             className={selectClass}
             value={selected}
@@ -100,13 +100,14 @@ export function SpeechSettings() {
         </label>
       </div>
       <p className="mt-3 text-sm leading-relaxed text-muted">
-        Giọng đọc phụ thuộc thiết bị. Bạn có thể thử các giọng Nhật ở trên và
-        luyện ở tốc độ bình thường.
+        Bộ N4 Dũng Mori dùng cùng giọng Nhật Nanami trên điện thoại và máy tính,
+        không cần cài thêm giọng đọc. Nếu chưa tự phát, hãy bấm loa để bắt đầu
+        nghe. Lựa chọn giọng thiết bị ở trên dùng cho nội dung ngoài bộ này.
       </p>
       {voices?.length === 0 && (
         <p role="status" className="mt-2 text-sm text-muted">
-          Chưa tìm thấy giọng Nhật. Hãy cài giọng tiếng Nhật trong cài đặt giọng
-          nói của thiết bị rồi tải lại trang.
+          Thiết bị chưa có giọng Nhật cho nội dung khác. Bạn vẫn nghe được từ và
+          câu ví dụ của bộ N4 Dũng Mori bằng nút loa.
         </p>
       )}
       {storageError && (
