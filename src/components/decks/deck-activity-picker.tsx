@@ -20,8 +20,8 @@ const activities = [
     icon: GalleryVerticalEnd,
     tag: "Làm quen",
     description:
-      "Nhìn từ tiếng Nhật, tự nhớ nghĩa rồi lật thẻ để khám phá câu ví dụ.",
-    detail: "Theo nhịp của bạn",
+      "Lật thẻ xem nghĩa, chọn đã thuộc hoặc chưa thuộc rồi học lại những từ khó nhớ.",
+    detail: "Ôn riêng từ chưa thuộc",
   },
   {
     id: "matching",

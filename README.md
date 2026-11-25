@@ -89,6 +89,8 @@ vercel --prod
 
 ## Học qua bộ thẻ
 
+Sau khi lật mỗi thẻ, chọn **✕ Chưa thuộc** hoặc **✓ Đã thuộc** để sang thẻ tiếp. Có thể quay lại thẻ trước để sửa đánh giá. Cuối lượt hiện số từ đã thuộc/chưa thuộc và hai lựa chọn **Học lại tất cả** hoặc **Học từ chưa thuộc**. Các lượt ôn riêng chỉ chứa từ còn chưa thuộc; đánh giá mới thay thế đánh giá cũ, có thể lặp lại đến khi nhớ hết. Phân loại ghi nhớ được giữ trong phiên đang mở. Phím tắt: Space lật thẻ, 1/X chưa thuộc, 2/C đã thuộc, ← về thẻ trước.
+
 Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật kèm furigana ở mặt trước; nghĩa Việt và ví dụ ở mặt sau. Mở hoặc chuyển thẻ sẽ tự đọc từ, có thể tắt trong **Giọng đọc & tự phát âm**. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Bộ N4 Dũng Mori dùng MP3 giọng tổng hợp Nhật Nanami cùng domain cho từ vựng, từ chữ Hán và câu ví dụ; Android không cần cài giọng Nhật. Đây là giọng tổng hợp, không phải bản thu gốc Dũng Mori. Nội dung ngoài danh mục MP3 dùng Web Speech với giọng Nhật của thiết bị. Tốc độ 0,85× / 1× / 1,1× và tự đọc được lưu trên thiết bị. Một số trình duyệt yêu cầu bấm loa trước khi cho phép tự phát. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
 
 Ghép cặp chia bài thành các lượt tối đa 5 cặp. Nghe chọn nghĩa dùng tối đa 4 nghĩa khác nhau và chỉ mở khi bài có ít nhất 2 nghĩa. Trả lời sai được thử lại. FE gửi các cặp đáp án của toàn bộ bài tới `POST /decks/:id/practice`; màn kết quả chỉ báo đã lưu sau khi BE xác nhận hoàn thành. Khi mất mạng, kết quả được giữ trong phiên để thử lưu lại. Triển khai BE có endpoint này trước FE; không cần migration cho tính năng này.

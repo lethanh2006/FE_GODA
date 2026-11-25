@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, Shuffle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, RotateCcw, Shuffle, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { FocusBar } from "@/components/learn/focus-bar";
@@ -16,9 +16,16 @@ import { cn } from "@/lib/cn";
 import {
   shuffled,
   type PracticeAnswer,
+  type PracticeMode,
   type PracticeResult,
 } from "@/lib/deck-games";
 import { deckHomeHref, type DeckCard, type DeckDetail } from "@/lib/decks";
+import {
+  createFlashcardRound,
+  rateFlashcardRound,
+  unrememberedCards,
+  type FlashcardRatings,
+} from "@/lib/flashcard-session";
 import { DeckActivityPicker, type DeckActivity } from "./deck-activity-picker";
 import { DeckFlashcard } from "./deck-flashcard";
 import { DeckListening } from "./deck-listening";
@@ -63,11 +70,9 @@ export function DeckSession({ id }: { id: string }) {
   return <DeckFlow key={id} deck={data} />;
 }
 
-type Completion = {
-  activity: DeckActivity;
-  answers?: PracticeAnswer[];
-  mistakes: number;
-};
+type Completion =
+  | { activity: "flashcards"; ratings: FlashcardRatings; reviewed: number }
+  | { activity: PracticeMode; answers: PracticeAnswer[]; mistakes: number };
 
 function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
   // Mỗi lượt chơi dùng một ảnh chụp nội dung; reconnect không đổi bộ câu hỏi giữa lượt.
@@ -76,12 +81,29 @@ function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
   const [completion, setCompletion] = useState<Completion | null>(null);
   const [round, setRound] = useState(0);
   const [done, setDone] = useState(0);
+  const [studyCards, setStudyCards] = useState<DeckCard[]>(deck.cards);
+  const [ratings, setRatings] = useState<FlashcardRatings>({});
   useEffect(() => () => stopJapanese(), [activity, completion]);
   const choose = (next: DeckActivity | null) => {
-    if (next) setDeck(latestDeck);
+    if (next) {
+      setDeck(latestDeck);
+      setStudyCards(latestDeck.cards);
+    }
+    setRatings({});
     setActivity(next);
     setCompletion(null);
     setDone(0);
+    setRound((n) => n + 1);
+  };
+  const repeatFlashcards = (onlyUnremembered: boolean) => {
+    const cards = onlyUnremembered
+      ? unrememberedCards(deck.cards, ratings)
+      : deck.cards;
+    if (!cards.length) return;
+    stopJapanese();
+    setStudyCards(cards);
+    if (!onlyUnremembered) setRatings({});
+    setCompletion(null);
     setRound((n) => n + 1);
   };
   if (completion)
@@ -89,7 +111,12 @@ function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
       <DoneStep
         deck={deck}
         completion={completion}
-        onAgain={() => choose(completion.activity)}
+        onAgain={() =>
+          completion.activity === "flashcards"
+            ? repeatFlashcards(false)
+            : choose(completion.activity)
+        }
+        onRepeatUnremembered={() => repeatFlashcards(true)}
         onChoose={() => choose(null)}
       />
     );
@@ -100,8 +127,17 @@ function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
       <LearnStep
         key={round}
         deck={deck}
+        cards={studyCards}
         onExit={() => choose(null)}
-        onFinish={() => setCompletion({ activity, mistakes: 0 })}
+        onFinish={(roundRatings) => {
+          const latestRatings = { ...ratings, ...roundRatings };
+          setRatings(latestRatings);
+          setCompletion({
+            activity,
+            ratings: latestRatings,
+            reviewed: studyCards.length,
+          });
+        }}
       />
     );
   const Game = activity === "matching" ? DeckMatching : DeckListening;
@@ -140,37 +176,45 @@ function DeckFlow({ deck: latestDeck }: { deck: DeckDetail }) {
 
 function LearnStep({
   deck,
+  cards,
   onExit,
   onFinish,
 }: {
   deck: DeckDetail;
+  cards: DeckCard[];
   onExit: () => void;
-  onFinish: () => void;
+  onFinish: (ratings: FlashcardRatings) => void;
 }) {
   const { autoPlay } = useSpeechPreferences();
-  const [order, setOrder] = useState<DeckCard[]>(deck.cards);
+  const [round, setRound] = useState(() => createFlashcardRound(cards));
   const [isShuffled, setIsShuffled] = useState(false);
   const [shuffleRound, setShuffleRound] = useState(0);
-  const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const card = order[index];
-  const move = useCallback(
-    (delta: number) => {
-      const next = Math.max(0, Math.min(order.length - 1, index + delta));
-      if (next === index) return;
-      stopJapanese();
-      setFlipped(false);
-      setIndex(next);
-    },
-    [index, order.length],
-  );
+  const card = round.cards[round.index];
+  const remembered = Object.values(round.ratings).filter(Boolean).length;
+  const unremembered = Object.values(round.ratings).filter((value) => !value).length;
+  const previous = useCallback(() => {
+    stopJapanese();
+    setFlipped(false);
+    setRound((value) => ({ ...value, index: Math.max(0, value.index - 1) }));
+  }, []);
+  const rate = useCallback((remembered: boolean) => {
+    if (!flipped) return;
+    const next = rateFlashcardRound(round, remembered);
+    stopJapanese();
+    setFlipped(false);
+    if (next.index === next.cards.length) onFinish(next.ratings);
+    else setRound(next);
+  }, [flipped, onFinish, round]);
   const flip = useCallback(() => setFlipped((value) => !value), []);
   const toggleShuffle = () => {
     stopJapanese();
-    setOrder(isShuffled ? deck.cards : shuffled(deck.cards));
+    setRound((value) => ({
+      ...createFlashcardRound(isShuffled ? cards : shuffled(cards)),
+      ratings: value.ratings,
+    }));
     setIsShuffled((v) => !v);
     setShuffleRound((round) => round + 1);
-    setIndex(0);
     setFlipped(false);
   };
   useEffect(() => {
@@ -178,34 +222,38 @@ function LearnStep({
       const target = event.target as HTMLElement;
       if (
         event.repeat ||
+        event.altKey || event.ctrlKey || event.metaKey ||
         target.closest(
           'input, textarea, select, [contenteditable], [role="region"][tabindex]',
         )
       )
         return;
-      // Space giữ hành vi gốc của nút; mũi tên vẫn chuyển thẻ khi nút đang có focus.
+      // Giữ Space để kích hoạt nút đang có focus bằng hành vi bàn phím gốc.
       if (event.key === " " && target.closest("button, a")) return;
       if (event.key === " ") {
         event.preventDefault();
         flip();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === "1" || event.key.toLowerCase() === "x") {
         event.preventDefault();
-        move(1);
+        rate(false);
+      } else if (event.key === "2" || event.key.toLowerCase() === "c") {
+        event.preventDefault();
+        rate(true);
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
-        move(-1);
+        previous();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flip, move]);
+  }, [flip, previous, rate]);
   return (
     <>
       <FocusBar
         onExit={onExit}
         title={deck.title}
-        done={index + 1}
-        total={order.length}
+        done={round.index}
+        total={round.cards.length}
       />
       <div
         className={cn(
@@ -234,35 +282,48 @@ function LearnStep({
           onFlip={flip}
           autoPlay={autoPlay}
         />
-        <div className="flex shrink-0 items-center justify-between gap-3">
+        <div className="flex shrink-0 items-center justify-between gap-2">
           <Button
-            size="lg"
-            variant="secondary"
-            disabled={index === 0}
-            onClick={() => move(-1)}
+            variant="ghost"
+            size="sm"
+            disabled={round.index === 0}
+            onClick={previous}
           >
             <ArrowLeft className="size-4" aria-hidden />
             Trước
           </Button>
-          {index === order.length - 1 ? (
-            <Button size="lg" onClick={onFinish}>
-              Xong bài
-              <Check className="size-5" aria-hidden />
-            </Button>
-          ) : (
-            <Button size="lg" onClick={() => move(1)}>
-              Thẻ tiếp
-              <ArrowRight className="size-5" aria-hidden />
-            </Button>
-          )}
+          <p role="status" className="text-right text-xs text-muted sm:text-sm">
+            {remembered} đã thuộc · {unremembered} chưa thuộc
+          </p>
         </div>
+        <div className="grid shrink-0 grid-cols-2 gap-3">
+          <Button
+            variant="danger"
+            disabled={!flipped}
+            aria-describedby="flashcard-rating-help"
+            onClick={() => rate(false)}
+          >
+            <X className="size-4" aria-hidden /> Chưa thuộc
+          </Button>
+          <Button
+            variant="success"
+            disabled={!flipped}
+            aria-describedby="flashcard-rating-help"
+            onClick={() => rate(true)}
+          >
+            <Check className="size-4" aria-hidden /> Đã thuộc
+          </Button>
+        </div>
+        <p id="flashcard-rating-help" className="shrink-0 text-center text-xs text-muted">
+          {flipped ? "Từ chưa thuộc sẽ được gom lại để học tiếp sau lượt này." : "Lật thẻ xem nghĩa rồi chọn mức ghi nhớ."}
+        </p>
         <p
           className={cn(
             "deck-study-shortcuts",
             "hidden shrink-0 text-center text-sm text-muted sm:block",
           )}
         >
-          Phím tắt: Space lật thẻ · ← → chuyển thẻ · Bấm loa để nghe lại
+          Space lật thẻ · 1 / X chưa thuộc · 2 / C đã thuộc · ← thẻ trước
         </p>
       </div>
     </>
@@ -273,17 +334,22 @@ function DoneStep({
   deck,
   completion,
   onAgain,
+  onRepeatUnremembered,
   onChoose,
 }: {
   deck: DeckDetail;
   completion: Completion;
   onAgain: () => void;
+  onRepeatUnremembered: () => void;
   onChoose: () => void;
 }) {
   const { mutate } = useSWRConfig();
   const [status, setStatus] = useState<"saving" | "saved" | "error">("saving");
   const [errorMessage, setErrorMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
+  const unremembered = completion.activity === "flashcards"
+    ? unrememberedCards(deck.cards, completion.ratings).length
+    : 0;
   useEffect(() => {
     let active = true;
     const save =
@@ -331,14 +397,32 @@ function DoneStep({
       <div className="space-y-3">
         <p className="eyebrow">Mỗi lượt học, nhớ thêm một chút</p>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Bạn đã luyện xong {deck.title}!
+          {completion.activity === "flashcards" ? "Bạn đã hoàn thành lượt học" : "Bạn đã luyện xong"} {deck.title}!
         </h1>
         <p className="text-lg text-muted">
-          {deck.cards.length} thẻ đã luyện
+          {completion.activity === "flashcards" ? completion.reviewed : deck.cards.length} thẻ đã luyện
           {completion.activity !== "flashcards" &&
             ` · ${completion.mistakes} lần thử chưa đúng`}
         </p>
+        {completion.activity === "flashcards" && (
+          <p className="text-base font-medium">
+            {deck.cards.length - unremembered} đã thuộc · {unremembered} chưa thuộc
+          </p>
+        )}
       </div>
+      {completion.activity === "flashcards" && (
+        <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+          {unremembered > 0 && (
+            <Button onClick={onRepeatUnremembered}>
+              <RotateCcw className="size-4" aria-hidden />
+              Học từ chưa thuộc ({unremembered})
+            </Button>
+          )}
+          <Button variant="secondary" onClick={onAgain}>
+            <RotateCcw className="size-4" aria-hidden /> Học lại tất cả
+          </Button>
+        </div>
+      )}
       <div role="status" className="text-base text-muted">
         {status === "saving"
           ? "Đang lưu tiến độ…"
@@ -369,9 +453,11 @@ function DoneStep({
         </Button>
         {status === "saved" && (
           <>
-            <Button variant="secondary" onClick={onAgain}>
-              Chơi lại
-            </Button>
+            {completion.activity !== "flashcards" && (
+              <Button variant="secondary" onClick={onAgain}>
+                Chơi lại
+              </Button>
+            )}
             {deck.nextId && (
               <ButtonLink
                 href={`${deckHomeHref(deck.collection)}/${deck.nextId}`}
