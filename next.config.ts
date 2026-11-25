@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 /** URL backend mà server Next.js gọi tới (không lộ ra trình duyệt). */
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? "http://localhost:4000/api";
+const API_INTERNAL_URL =
+  process.env.API_INTERNAL_URL ?? "http://localhost:4000/api";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -15,8 +16,23 @@ const nextConfig: NextConfig = {
     },
   },
   // Trình duyệt gọi /api/* cùng origin với web → cookie đăng nhập là first-party, không cần CORS.
+  async headers() {
+    return [
+      {
+        source: "/audio/ja-nanami-v1/:file",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   async rewrites() {
-    return [{ source: "/api/:path*", destination: `${API_INTERNAL_URL}/:path*` }];
+    return [
+      { source: "/api/:path*", destination: `${API_INTERNAL_URL}/:path*` },
+    ];
   },
 };
 

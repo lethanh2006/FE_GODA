@@ -89,7 +89,7 @@ vercel --prod
 
 ## Học qua bộ thẻ
 
-Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật kèm furigana ở mặt trước; nghĩa Việt và ví dụ ở mặt sau. Mở hoặc chuyển thẻ sẽ tự đọc từ, có thể tắt trong **Giọng đọc & tự phát âm**. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Phát âm dùng Web Speech với giọng Nhật được chọn rõ ràng sau khi danh sách giọng tải xong; không dùng giọng mặc định khác ngôn ngữ. Người học có thể chọn giọng Nhật và tốc độ 0,85× / 1× / 1,1×; lựa chọn được lưu trên thiết bị. Mặc định là 1×, ưu tiên giọng trực tuyến nếu có, không cần API key hay dịch vụ trả phí. Chất lượng vẫn phụ thuộc giọng được cài trên thiết bị, không tương đương bản thu đề thi JLPT. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
+Mỗi bài mở màn chọn hoạt động. Lật thẻ luôn hiện tiếng Nhật kèm furigana ở mặt trước; nghĩa Việt và ví dụ ở mặt sau. Mở hoặc chuyển thẻ sẽ tự đọc từ, có thể tắt trong **Giọng đọc & tự phát âm**. Nút loa ở hai mặt đọc từ; loa cạnh mỗi ví dụ đọc toàn bộ câu tiếng Nhật. Bộ N4 Dũng Mori dùng MP3 giọng tổng hợp Nhật Nanami cùng domain cho từ vựng, từ chữ Hán và câu ví dụ; Android không cần cài giọng Nhật. Đây là giọng tổng hợp, không phải bản thu gốc Dũng Mori. Nội dung ngoài danh mục MP3 dùng Web Speech với giọng Nhật của thiết bị. Tốc độ 0,85× / 1× / 1,1× và tự đọc được lưu trên thiết bị. Một số trình duyệt yêu cầu bấm loa trước khi cho phép tự phát. Nếu không phát được, giao diện hiển thị hướng dẫn thử lại.
 
 Ghép cặp chia bài thành các lượt tối đa 5 cặp. Nghe chọn nghĩa dùng tối đa 4 nghĩa khác nhau và chỉ mở khi bài có ít nhất 2 nghĩa. Trả lời sai được thử lại. FE gửi các cặp đáp án của toàn bộ bài tới `POST /decks/:id/practice`; màn kết quả chỉ báo đã lưu sau khi BE xác nhận hoàn thành. Khi mất mạng, kết quả được giữ trong phiên để thử lưu lại. Triển khai BE có endpoint này trước FE; không cần migration cho tính năng này.
 
@@ -100,3 +100,20 @@ Nội dung đọc từ dùng cách đọc đã có và bỏ dấu ngoặc của 
 `/ngu-phap-n4` dành cho tài khoản đã đăng nhập, bám các chương 15–33 của khóa N4 đang học. Mỗi mục đi theo cách dùng → công thức → ví dụ có furigana và tiếng Việt → lỗi dễ nhầm → chọn đáp án/ghép câu. Có bảng nhắc cách chia ngay trong bài, lưu câu sai, luyện lại và tiếp tục trên thiết bị khác. Các chương từ vựng N4 có liên kết trực tiếp tới ngữ pháp cùng chương.
 
 Nội dung và đáp án chuẩn ở backend; client chỉ nhận lời giải sau khi gửi câu trả lời. Tiến độ dùng API `/grammar/n4`, không lưu riêng trong localStorage. Bộ học bổ trợ do Goda biên soạn theo mục lục nguồn, có liên kết đối chiếu ở mỗi chương.
+
+## Âm thanh N4 khi triển khai
+
+Commit cả `public/audio/ja-nanami-v1/`, `src/lib/data/japanese-audio.json` và bộ phát MP3. `pnpm build` chạy kiểm tra âm thanh trước khi build để chặn manifest thiếu file. Không chỉ triển khai từ máy có file chưa được commit: lần deploy từ Git tiếp theo sẽ mất âm thanh.
+
+Tạo lại (cần Python):
+
+```bash
+python3 -m venv /tmp/goda-tts
+/tmp/goda-tts/bin/pip install -r scripts/audio/requirements.txt
+# Xuất catalog hiện hành từ repo backend, không cần kết nối database:
+(cd ../backend && pnpm exec tsx -e 'import {DUNG_MORI_CATALOG} from "./src/modules/decks/dung-mori-data.ts"; console.log(JSON.stringify(DUNG_MORI_CATALOG))') > /tmp/goda-expanded-catalog.json
+/tmp/goda-tts/bin/python scripts/audio/generate-dung-mori.py ../backend/src/modules/decks/data/dung-mori-n4.json /tmp/goda-expanded-catalog.json
+pnpm test:decks
+```
+
+Script kiểm tra MP3 trước khi dùng lại, sinh phần còn thiếu và chỉ ghi manifest sau khi tất cả hoàn tất. Đổi thư mục phiên bản nếu đổi giọng hoặc tham số tổng hợp.

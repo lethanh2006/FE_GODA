@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build",
+    "build": "pnpm test:decks && next build",
     "start": "next start",
     "lint": "eslint",
     "test:decks": "node --experimental-strip-types --test tests/*.test.mjs"
